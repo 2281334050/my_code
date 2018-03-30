@@ -33,7 +33,7 @@ class App extends Component {
 function Create() {
     return(
         <div>
-            <h1>Create</h1>
+            <h1>没有朋友</h1>
         </div>
     )
 }
