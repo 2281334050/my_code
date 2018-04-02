@@ -6,9 +6,30 @@ import {
 } from 'react-router-dom';
 import './style.less';
 class App extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            className:'hide'
+        }
+    }
+    componentDidMount(){
+        window.addEventListener('scroll',this.handleScroll)
+    }
+    componentWillUnmount(){
+        window.removeEventListener('scroll',this.handleScroll)
+    }
+    handleScroll = (e)=>{
+        let ScrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+        if(ScrollTop<10){
+            this.setState({className:'hide'})
+        }else{
+            this.setState({className:''})
+        }
+    }
   render() {
     return (
       <div className={`main`}>
+          <TopBar class={this.state.className}/>
           <Router>
               <div className={`main-content`}>
                   <ul className={`top-links clearFix`}>
@@ -58,6 +79,15 @@ function GetMe() {
     return(
         <div>
             <h1>GetMe</h1>
+        </div>
+    )
+}
+/*顶部悬浮导航条*/
+function TopBar(props) {
+    let className = props.class;
+    return(
+        <div className={`top-Bar ${className}`}>
+
         </div>
     )
 }
