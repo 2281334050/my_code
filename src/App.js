@@ -12,10 +12,10 @@ class App extends Component {
           <Router>
               <div className={`main-content`}>
                   <ul className={`top-links clearFix`}>
-                      <li><Link to={`/`}><i className={`icon-registration`}></i>Create</Link></li>
-                      <li><Link to={`/skill`}>Skill</Link></li>
-                      <li><Link to={`/PersonalProjects`}>Personal Projects</Link></li>
-                      <li><Link to={`/GetMe`}>Get Me</Link></li>
+                      <li><Link to={`/`}><i className={`icon-username`}></i>Create</Link></li>
+                      <li><Link to={`/skill`}><i className={`icon-upgrade`}></i>Skill</Link></li>
+                      <li><Link to={`/PersonalProjects`}><i className={`icon-star`}></i>Personal Projects</Link></li>
+                      <li><Link to={`/GetMe`}><i className={`icon-mail`}></i>Contact</Link></li>
                   </ul>
                   <div className={`content`}>
                       <Route exact path={`/`} component={Create}/>
