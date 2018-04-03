@@ -5,6 +5,7 @@ import {
     Link
 } from 'react-router-dom';
 import './style.less';
+/*页面主体*/
 class App extends Component {
     constructor(props){
         super(props);
@@ -29,20 +30,21 @@ class App extends Component {
   render() {
     return (
       <div className={`main`}>
-          <TopBar class={this.state.className}/>
           <Router>
               <div className={`main-content`}>
+                  <TopBar class={this.state.className}/>
                   <ul className={`top-links clearFix`}>
                       <li><Link to={`/`}><i className={`icon-username`}></i>Create</Link></li>
                       <li><Link to={`/skill`}><i className={`icon-upgrade`}></i>Skill</Link></li>
                       <li><Link to={`/PersonalProjects`}><i className={`icon-star`}></i>Personal Projects</Link></li>
-                      <li><Link to={`/GetMe`}><i className={`icon-mail`}></i>Contact</Link></li>
+                      <li><Link to={`/Contact`}><i className={`icon-mail`}></i>Contact</Link></li>
                   </ul>
                   <div className={`content`}>
-                      <Route exact path={`/`} component={Create}/>
-                      <Route exact path={`/skill`} component={Skill}/>
-                      <Route exact path={`/PersonalProjects`} component={PersonalProjects}/>
-                      <Route exact path={`/GetMe`} component={GetMe}/>
+                      {
+                          routes.map((route,i) => (
+                              <RouteWithSubRoutes key={i} {...route}/>
+                          ))
+                      }
                   </div>
               </div>
           </Router>
@@ -75,7 +77,7 @@ function PersonalProjects() {
     )
 }
 /*得到我*/
-function GetMe() {
+function Contact() {
     return(
         <div>
             <h1>GetMe</h1>
@@ -87,8 +89,38 @@ function TopBar(props) {
     let className = props.class;
     return(
         <div className={`top-Bar ${className}`}>
-
+            <div className={`links clearFix`}>
+                <Link to={`/`} className={`icon-username`}></Link>
+                <Link to={`/skill`} className={`icon-upgrade`}></Link>
+                <Link to={`/PersonalProjects`} className={`icon-star`}></Link>
+                <Link to={`/Contact`} className={`icon-mail`}></Link>
+            </div>
         </div>
+    )
+}
+/*路由配置*/
+const routes = [
+    {
+        path:'/',
+        component:Create
+    },
+    {
+        path:'/skill',
+        component:Skill
+    },
+    {
+        path:'/PersonalProjects',
+        component:PersonalProjects
+    },
+    {
+        path:'/Contact',
+        component:Contact
+    },
+];
+/*路由公共方法*/
+function RouteWithSubRoutes (route){
+    return(
+        <Route path={route.path} exact component={route.component}/>
     )
 }
 export default App;
