@@ -5,6 +5,7 @@ import {
     Link
 } from 'react-router-dom';
 import './style.less';
+import { Transition } from 'react-transition-group';
 /*页面主体*/
 class App extends Component {
     constructor(props){
@@ -53,36 +54,60 @@ class App extends Component {
   }
 }
 /*简介页*/
-function Create() {
-    return(
-        <div>
-
-        </div>
-    )
+class Create extends Component{
+    constructor(props){
+        super(props);
+    }
+    render(){
+        return(
+            <div>
+                <ScrollToTopOnMount/>
+                Create
+            </div>
+        )
+    }
 }
 /*技能页*/
-function Skill() {
-    return(
-        <div>
-            <h1>Skill</h1>
-        </div>
-    )
+class Skill extends Component {
+    constructor(props){
+        super(props)
+    }
+    render(){
+        return(
+            <div>
+                <ScrollToTopOnMount/>
+                <h1>Skill</h1>
+            </div>
+        )
+    }
 }
 /*个人项目页*/
-function PersonalProjects() {
-    return(
-        <div>
-            <h1>PersonalProjects</h1>
-        </div>
-    )
+class PersonalProjects extends Component{
+    constructor(props){
+        super(props)
+    }
+    render(){
+        return(
+            <div>
+                <ScrollToTopOnMount/>
+                <h1>PersonalProjects</h1>
+            </div>
+        )
+    }
 }
 /*得到我*/
-function Contact() {
-    return(
-        <div>
-            <h1>GetMe</h1>
-        </div>
-    )
+class Contact extends Component{
+    constructor(props){
+        super(props)
+    }
+    render(){
+        return(
+            <div>
+                <ScrollToTopOnMount/>
+                <h1>Contact</h1>
+            </div>
+        )
+    }
 }
 /*顶部悬浮导航条*/
 function TopBar(props) {
@@ -121,6 +146,25 @@ const routes = [
 function RouteWithSubRoutes (route){
     return(
         <Route path={route.path} exact component={route.component}/>
+    )
+}
+/*路由跳转回到顶部组件*/
+class ScrollToTopOnMount extends Component {
+    componentDidMount(prevProps) {
+        window.scrollTo(0, 0)
+    }
+
+    render() {
+        return null
+    }
+}
+/*AJAXloading条*/
+function Ajax_loading() {
+    return(
+        <div className={`ajaxLoader`}>
+            <div className={`outer`}></div>
+            <div className={`inner`}></div>
+        </div>
     )
 }
 export default App;
