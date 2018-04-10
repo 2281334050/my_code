@@ -5,13 +5,13 @@ import {
     Link
 } from 'react-router-dom';
 import './style.less';
-import { Transition } from 'react-transition-group';
 /*页面主体*/
 class App extends Component {
     constructor(props){
         super(props);
         this.state = {
-            className:'hide'
+            className:'hide',
+            isLoading:false
         }
     }
     componentDidMount(){
@@ -35,10 +35,10 @@ class App extends Component {
               <div className={`main-content`}>
                   <TopBar class={this.state.className}/>
                   <ul className={`top-links clearFix`}>
-                      <li><Link to={`/`}><i className={`icon-username`}></i>Create</Link></li>
-                      <li><Link to={`/skill`}><i className={`icon-upgrade`}></i>Skill</Link></li>
-                      <li><Link to={`/PersonalProjects`}><i className={`icon-star`}></i>Personal Projects</Link></li>
-                      <li><Link to={`/Contact`}><i className={`icon-mail`}></i>Contact</Link></li>
+                      <li><OldSchoolMenuLink to={`/`} activeOnlyWhenExact={true} class={`icon-username`} label={`Create`}/></li>
+                      <li><OldSchoolMenuLink to={`/skill`} class={`icon-upgrade`} label={`Skill`}/></li>
+                      <li><OldSchoolMenuLink to={`/PersonalProjects`} class={`icon-star`} label={`Personal Projects`}/></li>
+                      <li><OldSchoolMenuLink to={`/Contact`} class={`icon-mail`} label={`Contact`}/></li>
                   </ul>
                   <div className={`content`}>
                       {
@@ -57,6 +57,7 @@ class App extends Component {
 class Create extends Component{
     constructor(props){
         super(props);
+        console.log(props.match)
     }
     render(){
         return(
@@ -115,10 +116,10 @@ function TopBar(props) {
     return(
         <div className={`top-Bar ${className}`}>
             <div className={`links clearFix`}>
-                <Link to={`/`} className={`icon-username`}></Link>
-                <Link to={`/skill`} className={`icon-upgrade`}></Link>
-                <Link to={`/PersonalProjects`} className={`icon-star`}></Link>
-                <Link to={`/Contact`} className={`icon-mail`}></Link>
+                <OldSchoolMenuLink to={`/`} activeOnlyWhenExact={true} class={`icon-username`}/>
+                <OldSchoolMenuLink to={`/skill`}  class={`icon-upgrade`}/>
+                <OldSchoolMenuLink to={`/PersonalProjects`}  class={`icon-star`}/>
+                <OldSchoolMenuLink to={`/Contact`}  class={`icon-mail`}/>
             </div>
         </div>
     )
@@ -146,6 +147,14 @@ const routes = [
 function RouteWithSubRoutes (route){
     return(
         <Route path={route.path} exact component={route.component}/>
+    )
+}
+/*导航LINK*/
+function OldSchoolMenuLink(props) {
+    return(
+        <Route path={props.to} exact={props.activeOnlyWhenExact} children={({match})=>(
+            <Link className={match?'active':''} to={props.to}><i className={`${props.class}`}></i>{props.label}</Link>
+        )}/>
     )
 }
 /*路由跳转回到顶部组件*/

@@ -76,7 +76,11 @@ body{
         transition: .3s linear;
         &:hover{
           background: lighten(#222222,5%);
-          color:rgb(@R,@G,@B);
+          color:#d3b84e;
+        }
+        &.active{
+          background: lighten(#222222,5%);
+          color:#d3b84e;
         }
       }
     }
@@ -149,14 +153,17 @@ body{
   }
   &:hover::before{
     width: 100%;
-    border-color: rgb(@R,@G,@B);
+    border-color: #ee47a6;
   }
   &:hover::after{
     height: 100%;
-    border-color: rgb(@R,@G,@B);
+    border-color: #ee47a6;
   }
   &:hover{
-    color: rgb(@R,@G,@B);
+    color: #ee47a6;
+  }
+  &.active{
+    color:#ee47a6;
   }
 }
 /*AJAX loading动效*/
