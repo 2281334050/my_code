@@ -48,7 +48,6 @@ body{
   width: 100%;
   max-width: 1000px;
   margin: 0 auto;
-  padding-top: 30px;
   /*浮动显示的TopBar*/
   .top-Bar{
     position: fixed;
@@ -92,27 +91,43 @@ body{
   .main-content{
     text-align: center;
     /*topBar*/
-    .top-links{
-      >li{
-        float: left;
-        height: 50px;
-        line-height: 50px;
-        width: 25%;
-        >a{
-          >i{
-            padding-right: 10px;
+    .header{
+      padding: 25px 0;
+      .top-links{
+        >li{
+          float: left;
+          height: 50px;
+          line-height: 50px;
+          width: 25%;
+          >a{
+            >i{
+              padding-right: 10px;
+            }
+            width: 100%;
+            .btn(@R,@G,@B);
+            margin-left: 5px;
           }
-          width: 100%;
-          .btn(@R,@G,@B);
-          margin-left: 5px;
         }
       }
     }
   }
   .content{
     color: #fff;
-    margin-top: 30px;
-    min-height: 1000px;
+    min-height: 800px;
+    padding: 0 100px;
+    .left-link{
+      float: left;
+      width: 180px;
+      min-height: 500px;
+      .br();
+    }
+    .right-content{
+      float: left;
+      width: 600px;
+      margin-left: 20px;
+      min-height: 500px;
+      .br();
+    }
   }
 }
 /*按钮*/
@@ -167,7 +182,10 @@ body{
   }
 }
 /*AJAX loading动效*/
-
+.br(){
+  border-radius: 3px;
+  border: 1px solid #222;
+}
 .ajaxLoader {
   margin: 0 auto;
 }

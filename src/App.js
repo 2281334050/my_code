@@ -11,7 +11,7 @@ class App extends Component {
         super(props);
         this.state = {
             className:'hide',
-            isLoading:false
+            isLoading:true
         }
     }
     componentDidMount(){
@@ -34,16 +34,18 @@ class App extends Component {
           <Router>
               <div className={`main-content`}>
                   <TopBar class={this.state.className}/>
-                  <ul className={`top-links clearFix`}>
-                      <li><OldSchoolMenuLink to={`/`} activeOnlyWhenExact={true} class={`icon-username`} label={`Create`}/></li>
-                      <li><OldSchoolMenuLink to={`/skill`} class={`icon-upgrade`} label={`Skill`}/></li>
-                      <li><OldSchoolMenuLink to={`/PersonalProjects`} class={`icon-star`} label={`Personal Projects`}/></li>
-                      <li><OldSchoolMenuLink to={`/Contact`} class={`icon-mail`} label={`Contact`}/></li>
-                  </ul>
+                  <div className={`header`}>
+                      <ul className={`top-links clearFix`}>
+                          <li><OldSchoolMenuLink to={`/`} activeOnlyWhenExact={true} class={`icon-username`} label={`Create`}/></li>
+                          <li><OldSchoolMenuLink to={`/skill`} class={`icon-upgrade`} label={`Skill`}/></li>
+                          <li><OldSchoolMenuLink to={`/PersonalProjects`} class={`icon-star`} label={`Personal Projects`}/></li>
+                          <li><OldSchoolMenuLink to={`/Contact`} class={`icon-mail`} label={`Contact`}/></li>
+                      </ul>
+                  </div>
                   <div className={`content`}>
                       {
                           routes.map((route,i) => (
-                              <RouteWithSubRoutes key={i} {...route}/>
+                              <RouteWithSubRoutes isLoading={this.state.isLoading} key={i} {...route}/>
                           ))
                       }
                   </div>
@@ -57,13 +59,17 @@ class App extends Component {
 class Create extends Component{
     constructor(props){
         super(props);
-        console.log(props.match)
     }
     render(){
         return(
             <div>
                 <ScrollToTopOnMount/>
-                Create
+                <div className={`left-link`}>
+
+                </div>
+                <div className={`right-content`}>
+
+                </div>
             </div>
         )
     }
@@ -145,8 +151,16 @@ const routes = [
 ];
 /*路由公共方法*/
 function RouteWithSubRoutes (route){
+    const isLoading = route.isLoading;
     return(
-        <Route path={route.path} exact component={route.component}/>
+        <Route path={route.path} exact render={(props)=>
+            {
+                if(isLoading){
+                    return <Ajax_loading />
+                }
+                return <route.component />
+            }
+        }/>
     )
 }
 /*导航LINK*/
