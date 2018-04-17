@@ -11,11 +11,11 @@ class App extends Component {
         super(props);
         this.state = {
             className:'hide',
-            isLoading:true
+            isLoading:false
         }
     }
     componentDidMount(){
-        window.addEventListener('scroll',this.handleScroll)
+        window.addEventListener('scroll',this.handleScroll);
     }
     componentWillUnmount(){
         window.removeEventListener('scroll',this.handleScroll)
@@ -59,16 +59,61 @@ class App extends Component {
 class Create extends Component{
     constructor(props){
         super(props);
+        this.state={
+            top:0,
+            title:'个人简历',
+            currentElem:0//当前选中的按钮
+        }
+    }
+    componentDidMount(){
+
+    }
+    handleScroll=(e)=>{
+        e.preventDefault();
+        console.log(e.target)
+        let position = parseInt(e.target.getAttribute('href')),
+            title = e.target.getAttribute('title');
+        this.setState({
+            top:-445*position,
+            currentElem:position,
+            title:title
+        })
     }
     render(){
         return(
-            <div>
+            <div className={`clearFix`}>
                 <ScrollToTopOnMount/>
                 <div className={`left-link`}>
-
+                    <ul className={`links`}>
+                        <li className={`${this.state.currentElem == 0?'current':''}`}><a onClick={this.handleScroll} title={`个人简历`} href="0">My Resume</a></li>
+                        <li className={`${this.state.currentElem == 1?'current':''}`}><a onClick={this.handleScroll} title={`成长履历`} href="1">Growth Record</a></li>
+                        <li className={`${this.state.currentElem == 2?'current':''}`}><a onClick={this.handleScroll} title={`一些照片`} href="2">Some Photo</a></li>
+                        <li className={`${this.state.currentElem == 3?'current':''}`}><a onClick={this.handleScroll} title={`一些爱好`} href="3">Some Hobby</a></li>
+                    </ul>
                 </div>
                 <div className={`right-content`}>
-
+                    <div className={`head-bar`}>
+                        <span className={`title`}>{this.state.title}</span>
+                    </div>
+                    <div className={`warp`}>
+                        <ul className={`article-list`} ref={`article_list`} style={{top:this.state.top}}>
+                           <li className={`article`} ref={`article1`}>
+                                <h2>王 田</h2>
+                                <h4 className={`mt10`}>邮箱：2281334050@qq.com</h4>
+                                <h4 className={`mt5`}>毕业院校：上海电视大学，计算机应用与管理</h4>
+                                <h4 className={`mt5`}>Github：<a target={`_blank`} className={`linkStyle`} href="https://github.com/2281334050">Tian King</a></h4>
+                           </li>
+                           <li className={`article`} ref={`article2`}>
+                                2
+                           </li>
+                           <li className={`article`} ref={`article3`}>
+                                3
+                           </li>
+                           <li className={`article`} ref={`article4`}>
+                                4
+                           </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         )
@@ -85,6 +130,7 @@ class Skill extends Component {
                 <ScrollToTopOnMount/>
                 <h1>Skill</h1>
             </div>
+
         )
     }
 }
