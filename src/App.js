@@ -5,6 +5,7 @@ import {
     Link
 } from 'react-router-dom';
 import './style.less';
+import ImageData from './imageData';
 /*页面主体*/
 class App extends Component {
     constructor(props){
@@ -16,13 +17,14 @@ class App extends Component {
     }
     componentDidMount(){
         window.addEventListener('scroll',this.handleScroll);
+        console.log(ImageData)
     }
     componentWillUnmount(){
         window.removeEventListener('scroll',this.handleScroll)
     }
     handleScroll = (e)=>{
         let ScrollTop = document.body.scrollTop || document.documentElement.scrollTop;
-        if(ScrollTop<10){
+        if(ScrollTop<50){
             this.setState({className:'hide'})
         }else{
             this.setState({className:''})
@@ -70,7 +72,6 @@ class Create extends Component{
     }
     handleScroll=(e)=>{
         e.preventDefault();
-        console.log(e.target)
         let position = parseInt(e.target.getAttribute('href')),
             title = e.target.getAttribute('title');
         this.setState({
@@ -85,10 +86,10 @@ class Create extends Component{
                 <ScrollToTopOnMount/>
                 <div className={`left-link`}>
                     <ul className={`links`}>
-                        <li className={`${this.state.currentElem == 0?'current':''}`}><a onClick={this.handleScroll} title={`个人简历`} href="0">My Resume</a></li>
-                        <li className={`${this.state.currentElem == 1?'current':''}`}><a onClick={this.handleScroll} title={`成长履历`} href="1">Growth Record</a></li>
-                        <li className={`${this.state.currentElem == 2?'current':''}`}><a onClick={this.handleScroll} title={`一些照片`} href="2">Some Photo</a></li>
-                        <li className={`${this.state.currentElem == 3?'current':''}`}><a onClick={this.handleScroll} title={`一些爱好`} href="3">Some Hobby</a></li>
+                        <li className={`${this.state.currentElem === 0?'current':''}`}><a onClick={this.handleScroll} title={`个人简历`} href="0">My Resume</a></li>
+                        <li className={`${this.state.currentElem === 1?'current':''}`}><a onClick={this.handleScroll} title={`成长履历`} href="1">Growth Record</a></li>
+                        <li className={`${this.state.currentElem === 2?'current':''}`}><a onClick={this.handleScroll} title={`一些照片`} href="2">Some Photo</a></li>
+                        <li className={`${this.state.currentElem === 3?'current':''}`}><a onClick={this.handleScroll} title={`一些爱好`} href="3">Some Hobby</a></li>
                     </ul>
                 </div>
                 <div className={`right-content`}>
@@ -97,19 +98,19 @@ class Create extends Component{
                     </div>
                     <div className={`warp`}>
                         <ul className={`article-list`} ref={`article_list`} style={{top:this.state.top}}>
-                           <li className={`article`} ref={`article1`}>
+                           <li className={`article`}>
                                 <h2>王 田</h2>
                                 <h4 className={`mt10`}>邮箱：2281334050@qq.com</h4>
                                 <h4 className={`mt5`}>毕业院校：上海电视大学，计算机应用与管理</h4>
                                 <h4 className={`mt5`}>Github：<a target={`_blank`} className={`linkStyle`} href="https://github.com/2281334050">Tian King</a></h4>
                            </li>
-                           <li className={`article`} ref={`article2`}>
+                           <li className={`article`}>
                                 2
                            </li>
-                           <li className={`article`} ref={`article3`}>
+                           <li className={`article`}>
                                 3
                            </li>
-                           <li className={`article`} ref={`article4`}>
+                           <li className={`article`}>
                                 4
                            </li>
                         </ul>

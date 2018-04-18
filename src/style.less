@@ -1,4 +1,5 @@
 @import "iconfont/css/iconfont";
+@import "colorStyle";
 /*公共样式*/
 .mt5{
   margin-top: 5px;
@@ -38,7 +39,7 @@
 }
 
 .linkStyle{
-  color: #8aff51;
+  color: @linkColor;
   &:after{
     content: '\E88D';
     font-family: "iconfont";
@@ -65,7 +66,7 @@
 /*边框倒角*/
 .br(@r){
   border-radius: @r;
-  border: 1px solid #222;
+  border: 1px solid @borderColor;
 }
 /*按钮*/
 .btn(){
@@ -74,14 +75,14 @@
   opacity: .999;
   border-radius: 3px;
   background-color: transparent;
-  color: #B8B8B8;
+  color: @btnTextColor;
   -webkit-transition: all 0.3s;
   transition: all 0.3s;
   &:hover{
-    color: #ee47a6;
+    color: @btnHoverColor;
   }
   &.active{
-    color:#ee47a6;
+    color:@btnHoverColor;
   }
 }
 .clearFix:after {
@@ -115,7 +116,7 @@ a{
   box-sizing: border-box;
 }
 body{
-  background: #000;
+  background: @backgroundColor;
 }
 #root{
   min-height: 600px;
@@ -133,9 +134,9 @@ body{
     top: 0;
     left: 0;
     width: 100%;
-    background: #222222;
+    background: @barBackgroundColor;
     z-index: 1;
-    opacity: 1;
+    opacity: .9;
     transition: .3s linear;
     -moz-transition: .3s linear;
     -o-transition: .3s linear;
@@ -153,12 +154,12 @@ body{
         color: #ccc;
         transition: .3s linear;
         &:hover{
-          background: lighten(#222222,5%);
-          color:#d3b84e;
+          background: lighten(@barBackgroundColor,5%);
+          color:@btnHoverColor;
         }
         &.active{
-          background: lighten(#222222,5%);
-          color:#d3b84e;
+          background: lighten(@barBackgroundColor,5%);
+          color:@btnHoverColor;
         }
       }
     }
@@ -172,7 +173,7 @@ body{
     /*topBar*/
     .header{
       padding: 25px 0;
-      border-bottom: 1px solid #222;
+      background: @barBackgroundColor;
       .top-links{
         width: 100%;
         max-width: 1000px;
@@ -199,43 +200,40 @@ body{
     max-width: 1000px;
     margin: 0 auto;
     color: #fff;
-    min-height: 800px;
-    padding-top: 20px;
+    margin-top: 20px;
+    padding: 20px;
+    .br(5px);
+    background: @barBackgroundColor;
     .left-link{
       float: left;
-      width: 280px;
-      min-height: 500px;
+      width: 275px;
       .links{
         padding: 0 35px;
         >li{
-          //width: 80px;
           line-height: 80px;
           text-align: center;
-          border: 1px solid #222;
+          border: 1px solid @borderColor;
           transition: .3s linear;
           margin-top: 35px;
           .br(3px);
-          //&:nth-child(2),&:nth-child(4){
-          //  margin-left: 80px;
-          //}
           >a{
             display: block;
-            color: #B8B8B8;
+            color: @btnTextColor;
           }
           &:hover{
-            border-color: #99aaca;
+            border-color: @btnHoverColor;
             box-shadow: 0 0 5px rgba(255, 255, 255, 0.9);
             transform: rotateZ(5deg);
             >a{
-              color: #fff;
+              color: @btnHoverColor;
             }
           }
           &.current{
-            border-color: #99aaca;
+            border-color: @btnHoverColor;
             box-shadow: 0 0 5px rgba(255, 255, 255, 0.9);
             transform: rotateZ(5deg);
             >a{
-              color: #fff;
+              color: @btnHoverColor;
             }
           }
         }
@@ -243,15 +241,14 @@ body{
     }
     .right-content{
       float: left;
-      width: 700px;
+      width: 660px;
       margin-left: 20px;
-      min-height: 500px;
       .head-bar{
         line-height: 60px;
-        border-bottom: 2px solid #666;
+        border-bottom: 2px solid @borderColor;
         .title{
           font-size: 20px;
-          color:#fff;
+          color:@TextColor;
         }
       }
       .warp{
@@ -263,8 +260,9 @@ body{
           width: 100%;
           transition: .3s linear;
           .article{
-            background: #222;
+            background: @barBackgroundColor;
             text-align: left;
+            color: @TextColor;
             word-break: break-all;
             padding: 20px;
             margin-top: 5px;
