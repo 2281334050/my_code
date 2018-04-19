@@ -6,6 +6,11 @@ import {
 } from 'react-router-dom';
 import './style.less';
 import ImageData from './imageData';
+const requireContext = require.context("./img",true);
+const images = requireContext.keys().map(requireContext);
+ImageData.map(function (item,i) {
+    item.url=images[i]
+})
 /*页面主体*/
 class App extends Component {
     constructor(props){
@@ -17,7 +22,6 @@ class App extends Component {
     }
     componentDidMount(){
         window.addEventListener('scroll',this.handleScroll);
-        console.log(ImageData)
     }
     componentWillUnmount(){
         window.removeEventListener('scroll',this.handleScroll)
@@ -111,7 +115,7 @@ class Create extends Component{
                                 3
                            </li>
                            <li className={`article`}>
-                                4
+                               <Route component={PhotoRoute} />
                            </li>
                         </ul>
                     </div>
@@ -120,6 +124,29 @@ class Create extends Component{
         )
     }
 }
+    /*相片路由*/
+function PhotoRoute() {
+    return(
+        <div>
+            {
+                ImageData.map(function (key) {
+                    return(
+                       <Link key={key.id} to={{pathname:`/photo/${key.id}`}} >
+                            <Image url={key.url}/>
+                       </Link>
+                    )
+                })
+            }
+        </div>
+    )
+}
+
+function Image(props) {
+    return(
+        <img src={`http://localhost:3000/${props.url}`} style={{height:100,width:100}}/>
+    )
+}
+
 /*技能页*/
 class Skill extends Component {
     constructor(props){
@@ -198,13 +225,9 @@ const routes = [
 ];
 /*路由公共方法*/
 function RouteWithSubRoutes (route){
-    const isLoading = route.isLoading;
     return(
         <Route path={route.path} exact render={(props)=>
             {
-                if(isLoading){
-                    return <Ajax_loading />
-                }
                 return <route.component />
             }
         }/>
