@@ -127,12 +127,13 @@ class Create extends Component{
     /*相片路由*/
 function PhotoRoute() {
     return(
-        <div>
+        <div className={`photos`}>
             {
                 ImageData.map(function (key) {
                     return(
                        <Link key={key.id} to={{pathname:`/photo/${key.id}`}} >
                             <Image url={key.url}/>
+                           <p>{key.title}</p>
                        </Link>
                     )
                 })
