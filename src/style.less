@@ -265,6 +265,24 @@ body{
             padding: 20px;
             margin-top: 5px;
             min-height: 440px;
+            .photos{
+              >a{
+                float: left;
+                margin-left: 20px;
+                margin-bottom: 20px;
+                overflow: hidden;
+                >img{
+                  transition: .3s linear;
+                }
+                >p{
+                  text-align: center;
+                  color: @btnTextColor;
+                }
+                &:hover >img{
+                  transform: scale(1.1);
+                }
+              }
+            }
           }
         }
       }
