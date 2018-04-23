@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import {
     BrowserRouter as Router,
     Route,
-    Link
+    Link,
+    NavLink
 } from 'react-router-dom';
 import './style.less';
 import ImageData from './imageData';
@@ -42,16 +43,16 @@ class App extends Component {
                   <TopBar class={this.state.className}/>
                   <div className={`header`}>
                       <ul className={`top-links clearFix`}>
-                          <li><OldSchoolMenuLink to={`/`} activeOnlyWhenExact={true} class={`icon-username`} label={`Create`}/></li>
-                          <li><OldSchoolMenuLink to={`/skill`} class={`icon-upgrade`} label={`Skill`}/></li>
-                          <li><OldSchoolMenuLink to={`/PersonalProjects`} class={`icon-star`} label={`Personal Projects`}/></li>
-                          <li><OldSchoolMenuLink to={`/Contact`} class={`icon-mail`} label={`Contact`}/></li>
+                          <li><NavLink to={`/`}  exact activeClassName={`active`}> <i className={`icon-username`}></i>Create</NavLink></li>
+                          <li><NavLink to={`/skill`} activeClassName={`active`}> <i className={`icon-upgrade`}></i>Skill</NavLink></li>
+                          <li><NavLink to={`/PersonalProjects`} activeClassName={`active`}> <i className={`icon-star`}></i>Personal Projects</NavLink></li>
+                          <li><NavLink to={`/Contact`} activeClassName={`active`}> <i className={`icon-mail`}></i>Contact</NavLink></li>
                       </ul>
                   </div>
                   <div className={`content`}>
                       {
                           routes.map((route,i) => (
-                              <RouteWithSubRoutes isLoading={this.state.isLoading} key={i} {...route}/>
+                              <RouteWithSubRoutes key={i} {...route}/>
                           ))
                       }
                   </div>
@@ -115,7 +116,6 @@ class Create extends Component{
                                 3
                            </li>
                            <li className={`article`}>
-                               <Route component={PhotoRoute} />
                            </li>
                         </ul>
                     </div>
@@ -197,10 +197,10 @@ function TopBar(props) {
     return(
         <div className={`top-Bar ${className}`}>
             <div className={`links clearFix`}>
-                <OldSchoolMenuLink to={`/`} activeOnlyWhenExact={true} class={`icon-username`}/>
-                <OldSchoolMenuLink to={`/skill`}  class={`icon-upgrade`}/>
-                <OldSchoolMenuLink to={`/PersonalProjects`}  class={`icon-star`}/>
-                <OldSchoolMenuLink to={`/Contact`}  class={`icon-mail`}/>
+                <NavLink to={`/`} activeClassName={`active`} exact  className={`icon-username`}></NavLink>
+                <NavLink to={`/skill`} activeClassName={`active`}  className={`icon-upgrade`}></NavLink>
+                <NavLink to={`/PersonalProjects`} activeClassName={`active`}  className={`icon-star`}></NavLink>
+                <NavLink to={`/Contact`} activeClassName={`active`} className={`icon-mail`}></NavLink>
             </div>
         </div>
     )
@@ -232,14 +232,6 @@ function RouteWithSubRoutes (route){
                 return <route.component />
             }
         }/>
-    )
-}
-/*导航LINK*/
-function OldSchoolMenuLink(props) {
-    return(
-        <Route path={props.to} exact={props.activeOnlyWhenExact} children={({match})=>(
-            <Link className={match?'active':''} to={props.to}><i className={`${props.class}`}></i>{props.label}</Link>
-        )}/>
     )
 }
 /*路由跳转回到顶部组件*/
