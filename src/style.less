@@ -210,27 +210,23 @@ body{
         >li{
           line-height: 80px;
           text-align: center;
-          border: 1px solid @borderColor;
-          transition: .3s linear;
           margin-top: 35px;
-          .br(3px);
           >a{
             display: block;
+            transition: .3s linear;
             color: @btnTextColor;
-          }
-          &:hover{
-            border-color: @btnHoverColor;
-            box-shadow: 0 0 5px rgba(255, 255, 255, 0.9);
-            transform: rotateZ(5deg);
-            >a{
+            border: 1px solid @borderColor;
+            .br(3px);
+            &:hover{
+              border-color: @btnHoverColor;
+              box-shadow: 0 0 5px rgba(255, 255, 255, 0.9);
+              transform: rotateZ(5deg);
               color: @btnHoverColor;
             }
-          }
-          &.current{
-            border-color: @btnHoverColor;
-            box-shadow: 0 0 5px rgba(255, 255, 255, 0.9);
-            transform: rotateZ(5deg);
-            >a{
+            &.current{
+              border-color: @btnHoverColor;
+              box-shadow: 0 0 5px rgba(255, 255, 255, 0.9);
+              transform: rotateZ(5deg);
               color: @btnHoverColor;
             }
           }
