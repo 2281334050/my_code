@@ -3,7 +3,8 @@ import {
     BrowserRouter as Router,
     Route,
     Link,
-    NavLink
+    NavLink,
+    Redirect
 } from 'react-router-dom';
 import './style.less';
 import ImageData from './imageData';
@@ -43,13 +44,14 @@ class App extends Component {
                   <TopBar class={this.state.className}/>
                   <div className={`header`}>
                       <ul className={`top-links clearFix`}>
-                          <li><NavLink to={`/`}  exact activeClassName={`active`}> <i className={`icon-username`}></i>Create</NavLink></li>
+                          <li><NavLink to={`/Create`}  exact activeClassName={`active`}> <i className={`icon-username`}></i>Create</NavLink></li>
                           <li><NavLink to={`/skill`} activeClassName={`active`}> <i className={`icon-upgrade`}></i>Skill</NavLink></li>
                           <li><NavLink to={`/PersonalProjects`} activeClassName={`active`}> <i className={`icon-star`}></i>Personal Projects</NavLink></li>
                           <li><NavLink to={`/Contact`} activeClassName={`active`}> <i className={`icon-mail`}></i>Contact</NavLink></li>
                       </ul>
                   </div>
                   <div className={`content`}>
+                      <Route path={`/`} exact render={()=>(<Redirect to={`/Create`}/>)}/>
                       {
                           routes.map((route,i) => (
                               <RouteWithSubRoutes key={i} {...route}/>
@@ -197,7 +199,7 @@ function TopBar(props) {
     return(
         <div className={`top-Bar ${className}`}>
             <div className={`links clearFix`}>
-                <NavLink to={`/`} activeClassName={`active`} exact  className={`icon-username`}></NavLink>
+                <NavLink to={`/Create`} activeClassName={`active`} exact  className={`icon-username`}></NavLink>
                 <NavLink to={`/skill`} activeClassName={`active`}  className={`icon-upgrade`}></NavLink>
                 <NavLink to={`/PersonalProjects`} activeClassName={`active`}  className={`icon-star`}></NavLink>
                 <NavLink to={`/Contact`} activeClassName={`active`} className={`icon-mail`}></NavLink>
@@ -208,7 +210,7 @@ function TopBar(props) {
 /*路由配置*/
 const routes = [
     {
-        path:'/',
+        path:'/Create',
         component:Create
     },
     {
@@ -229,7 +231,7 @@ function RouteWithSubRoutes (route){
     return(
         <Route path={route.path} exact render={(props)=>
             {
-                return <route.component />
+                return <route.component/>
             }
         }/>
     )
