@@ -44,7 +44,7 @@ class App extends Component {
                   <TopBar class={this.state.className}/>
                   <div className={`header`}>
                       <ul className={`top-links clearFix`}>
-                          <li><NavLink to={`/Create`}  exact activeClassName={`active`}> <i className={`icon-username`}></i>Create</NavLink></li>
+                          <li><NavLink to={`/Create`}   activeClassName={`active`}> <i className={`icon-username`}></i>Create</NavLink></li>
                           <li><NavLink to={`/skill`} activeClassName={`active`}> <i className={`icon-upgrade`}></i>Skill</NavLink></li>
                           <li><NavLink to={`/PersonalProjects`} activeClassName={`active`}> <i className={`icon-star`}></i>Personal Projects</NavLink></li>
                           <li><NavLink to={`/Contact`} activeClassName={`active`}> <i className={`icon-mail`}></i>Contact</NavLink></li>
@@ -89,40 +89,49 @@ class Create extends Component{
     }
     render(){
         return(
-            <div className={`clearFix`}>
-                <ScrollToTopOnMount/>
-                <div className={`left-link`}>
-                    <ul className={`links`}>
-                        <li className={`${this.state.currentElem === 0?'current':''}`}><a onClick={this.handleScroll} title={`个人简历`} href="0">My Resume</a></li>
-                        <li className={`${this.state.currentElem === 1?'current':''}`}><a onClick={this.handleScroll} title={`成长履历`} href="1">Growth Record</a></li>
-                        <li className={`${this.state.currentElem === 2?'current':''}`}><a onClick={this.handleScroll} title={`一些照片`} href="2">Some Photo</a></li>
-                        <li className={`${this.state.currentElem === 3?'current':''}`}><a onClick={this.handleScroll} title={`一些爱好`} href="3">Some Hobby</a></li>
-                    </ul>
-                </div>
-                <div className={`right-content`}>
-                    <div className={`head-bar`}>
-                        <span className={`title`}>{this.state.title}</span>
-                    </div>
-                    <div className={`warp`}>
-                        <ul className={`article-list`} ref={`article_list`} style={{top:this.state.top}}>
-                           <li className={`article`}>
-                                <h2>王 田</h2>
-                                <h4 className={`mt10`}>邮箱：2281334050@qq.com</h4>
-                                <h4 className={`mt5`}>毕业院校：上海电视大学，计算机应用与管理</h4>
-                                <h4 className={`mt5`}>Github：<a target={`_blank`} className={`linkStyle`} href="https://github.com/2281334050">Tian King</a></h4>
-                           </li>
-                           <li className={`article`}>
-                                2
-                           </li>
-                           <li className={`article`}>
-                                3
-                           </li>
-                           <li className={`article`}>
-                           </li>
+            <Router>
+                <div className={`clearFix`}>
+                    <ScrollToTopOnMount/>
+                    <div className={`left-link`}>
+                        <ul className={`links`}>
+                            <li><NavLink to={`/Create/MyResume`} activeClassName={`current`}>My Resume</NavLink></li>
+                            <li className={`${this.state.currentElem === 0?'current':''}`}><a onClick={this.handleScroll} title={`个人简历`} href="0">My Resume</a></li>
+                            <li className={`${this.state.currentElem === 1?'current':''}`}><a onClick={this.handleScroll} title={`成长履历`} href="1">Growth Record</a></li>
+                            <li className={`${this.state.currentElem === 2?'current':''}`}><a onClick={this.handleScroll} title={`一些照片`} href="2">Some Photo</a></li>
+                            <li className={`${this.state.currentElem === 3?'current':''}`}><a onClick={this.handleScroll} title={`一些爱好`} href="3">Some Hobby</a></li>
                         </ul>
                     </div>
+                    <div className={`right-content`}>
+                        <div className={`head-bar`}>
+                            <span className={`title`}>{this.state.title}</span>
+                        </div>
+                        <div className={`warp`}>
+                            {/*<ul className={`article-list`} ref={`article_list`} style={{top:this.state.top}}>*/}
+                               {/*<li className={`article`}>*/}
+                                    {/*<h2>王 田</h2>*/}
+                                    {/*<h4 className={`mt10`}>邮箱：2281334050@qq.com</h4>*/}
+                                    {/*<h4 className={`mt5`}>毕业院校：上海电视大学，计算机应用与管理</h4>*/}
+                                    {/*<h4 className={`mt5`}>Github：<a target={`_blank`} className={`linkStyle`} href="https://github.com/2281334050">Tian King</a></h4>*/}
+                               {/*</li>*/}
+                               {/*<li className={`article`}>*/}
+                                    {/*2*/}
+                               {/*</li>*/}
+                               {/*<li className={`article`}>*/}
+                                    {/*3*/}
+                               {/*</li>*/}
+                               {/*<li className={`article`}>*/}
+                               {/*</li>*/}
+                            {/*</ul>*/}
+                            <Route path={`/Create`} exact render={()=>(<Redirect to={`/Create/MyResume`}/>)}/>
+                            {
+                                this.props.routes.map(function (route,i) {
+                                  return  <RouteWithSubRoutes key={i} {...route}/>
+                                })
+                            }
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </Router>
         )
     }
 }
@@ -199,7 +208,7 @@ function TopBar(props) {
     return(
         <div className={`top-Bar ${className}`}>
             <div className={`links clearFix`}>
-                <NavLink to={`/Create`} activeClassName={`active`} exact  className={`icon-username`}></NavLink>
+                <NavLink to={`/Create`} activeClassName={`active`}   className={`icon-username`}></NavLink>
                 <NavLink to={`/skill`} activeClassName={`active`}  className={`icon-upgrade`}></NavLink>
                 <NavLink to={`/PersonalProjects`} activeClassName={`active`}  className={`icon-star`}></NavLink>
                 <NavLink to={`/Contact`} activeClassName={`active`} className={`icon-mail`}></NavLink>
@@ -207,11 +216,50 @@ function TopBar(props) {
         </div>
     )
 }
+function MyResume() {
+    return(
+        <div>MyResume</div>
+    )
+}
+function GrowthRecord() {
+    return(
+        <div>GrowthRecord</div>
+    )
+}
+function MyPhotos() {
+    return(
+        <div>MyPhotos</div>
+    )
+}
+function MyHobby() {
+    return(
+        <div>MyHobby</div>
+    )
+}
 /*路由配置*/
 const routes = [
     {
         path:'/Create',
-        component:Create
+        component:Create,
+        routes:[
+            {
+                path:'/Create/MyResume',
+                component:MyResume
+            },
+            {
+                path:'/Create/GrowthRecord',
+                component:GrowthRecord
+            },
+            {
+                path:'/Create/MyPhotos',
+                component:MyPhotos
+            },
+            {
+                path:'/Create/MyHobby',
+                component:MyHobby
+            }
+        ]
+
     },
     {
         path:'/skill',
@@ -229,9 +277,9 @@ const routes = [
 /*路由公共方法*/
 function RouteWithSubRoutes (route){
     return(
-        <Route path={route.path} exact render={(props)=>
+        <Route path={route.path}  render={(props)=>
             {
-                return <route.component/>
+                return <route.component {...props} routes={route.routes}/>
             }
         }/>
     )
