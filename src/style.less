@@ -246,36 +246,81 @@ body{
         }
       }
       .warp{
-        position: relative;
         height: 440px;
         overflow: hidden;
-        .article-list{
-          position: absolute;
-          width: 100%;
-          transition: .3s linear;
-          .article{
-            background: @barBackgroundColor;
-            text-align: left;
-            color: @TextColor;
-            word-break: break-all;
-            padding: 20px;
-            margin-top: 5px;
-            min-height: 440px;
-            .photos{
-              >a{
-                float: left;
-                margin-left: 20px;
-                margin-bottom: 20px;
-                overflow: hidden;
-                >img{
-                  transition: .3s linear;
+        .article{
+          background: @barBackgroundColor;
+          text-align: left;
+          color: @TextColor;
+          word-break: break-all;
+          padding: 20px;
+          margin-top: 5px;
+          min-height: 440px;
+          .photos{
+            >a{
+              float: left;
+              margin-left: 20px;
+              margin-bottom: 20px;
+              overflow: hidden;
+              >img{
+                transition: .3s linear;
+              }
+              >p{
+                text-align: center;
+                color: @btnTextColor;
+              }
+              &:hover >img{
+                transform: scale(1.1);
+              }
+            }
+            .modal{
+              position: absolute;
+              top: 0;
+              left: 0;
+              bottom: 0;
+              right: 0;
+              background: rgba(0, 0, 0, .7);
+              .pics{
+                position: absolute;
+                top: 10%;
+                left: calc(50% - 400px);
+                right: 10%;
+                padding: 15px;
+                border: 2px solid #444;
+                text-align:center;
+                width: 800px;
+                .close{
+                  position: absolute;
+                  top: 15px;
+                  right: 15px;
+                  padding: 3px;
+                  border-radius: 50%;
+                  color: #222222;
+                  background: rgba(255,255,255,.5);
                 }
-                >p{
+                .left-tick,.right-tick{
+                  position: absolute;
+                  width: 50px;
+                  height: 500px;
+                  line-height: 500px;
+                  top: 15px;
+                  border-radius: 3px;
                   text-align: center;
-                  color: @btnTextColor;
+                  font-size: 20px;
+                  color: #222222;
+                  transition: .3s linear;
+                  opacity: 0;
+                  &:hover{
+                    opacity: 1;
+                    background: rgba(255,255,255,.5);
+                  }
                 }
-                &:hover >img{
-                  transform: scale(1.1);
+                .right-tick{
+                  right: 10%;
+                }
+                .left-tick{
+                  left: 10%;
+                  transform: rotate(180deg);
                 }
               }
             }
