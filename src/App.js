@@ -89,25 +89,20 @@ class Create extends Component{
                     <ScrollToTopOnMount/>
                     <div className={`left-link`}>
                         <ul className={`links`}>
-                            <li><NavLink to={`/Create/MyResume`} onClick={this.handleClick} label={`个人简历`} activeClassName={`current`}>My Resume</NavLink></li>
+                            <li><NavLink to={`/Create/MyResume`}  onClick={this.handleClick} label={`个人简历`} activeClassName={`current`}>My Resume</NavLink></li>
                             <li><NavLink to={`/Create/GrowthRecord`} onClick={this.handleClick} activeClassName={`current`} label={`个人履历`}>Growth Record</NavLink></li>
                             <li><NavLink to={`/Create/MyPhotos`} onClick={this.handleClick} activeClassName={`current`} label={`一些照片`}>My Photos</NavLink></li>
                             <li><NavLink to={`/Create/MyHobby`} onClick={this.handleClick} activeClassName={`current`} label={`个人喜好`}>My Hobby</NavLink></li>
                         </ul>
                     </div>
                     <div className={`right-content`}>
-                        <div className={`head-bar`}>
-                            <span className={`title`}>{this.state.title}</span>
-                        </div>
-                        <div className={`warp`}>
-                            {/*二级路由重定向*/}
-                            <Route path={`/Create`} exact render={()=>(<Redirect to={`/Create/MyResume`}/>)}/>
-                            {
-                                this.props.routes.map(function (route,i) {
-                                  return  <RouteWithSubRoutes key={i} {...route}/>
-                                })
-                            }
-                        </div>
+                        {/*二级路由重定向*/}
+                        <Route path={`/Create`} exact render={()=>(<Redirect to={`/Create/MyResume`}/>)}/>
+                        {
+                            this.props.routes.map(function (route,i) {
+                                return  <RouteWithSubRoutes key={i} {...route}/>
+                            })
+                        }
                     </div>
                 </div>
             </Router>
@@ -237,32 +232,68 @@ function TopBar(props) {
 /*简介页*/
 function MyResume() {
     return(
-        <div className={`article`}>
-            <h2>王 田</h2>
-            <h4 className={`mt10`}>邮箱：2281334050@qq.com</h4>
-            <h4 className={`mt5`}>毕业院校：上海电视大学，计算机应用与管理</h4>
-            <h4 className={`mt5`}>Github：<a target={`_blank`} className={`linkStyle`} href="https://github.com/2281334050">Tian King</a></h4>
+        <div>
+            <div className={`head-bar`}>
+                <span className={`title`}>个人简介</span>
+            </div>
+            <div className={`warp`}>
+                <div className={`article`}>
+                    <div className={`portrait`}>
+                        <img src={require('./img/portrait.jpg')} alt="头像"/>
+                    </div>
+                    <h2>王 田</h2>
+                    <h4 className={`mt10`}>邮箱：2281334050@qq.com</h4>
+                    <h4 className={`mt5`}>毕业院校：上海电视大学，计算机应用与管理</h4>
+                    <h4 className={`mt5`}>Github：<a target={`_blank`} className={`linkStyle`} href="https://github.com/2281334050">Tian King</a></h4>
+
+                </div>
+            </div>
         </div>
     )
 }
 /*成长页*/
 function GrowthRecord() {
     return(
-        <div>GrowthRecord</div>
+        <div>
+            <div className={`head-bar`}>
+                <span className={`title`}>个人履历</span>
+            </div>
+            <div className={`warp`}>
+                <div className={`article`}>
+
+                </div>
+            </div>
+        </div>
     )
 }
 /*相册页*/
 function MyPhotos() {
     return(
-        <div className={`article`}>
-            <PhotoRoute/>
+    <div>
+        <div className={`head-bar`}>
+            <span className={`title`}>一些照片</span>
         </div>
+        <div className={`warp`}>
+            <div className={`article`}>
+                <PhotoRoute/>
+            </div>
+        </div>
+    </div>
     )
 }
 /*爱好页*/
 function MyHobby() {
     return(
-        <div>MyHobby</div>
+        <div>
+            <div className={`head-bar`}>
+                <span className={`title`}>一些喜好</span>
+            </div>
+            <div className={`warp`}>
+                <div className={`article`}>
+
+                </div>
+            </div>
+        </div>
     )
 }
 /*路由配置*/

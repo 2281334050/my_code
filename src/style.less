@@ -325,6 +325,22 @@ body{
               }
             }
           }
+          .portrait{
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid @borderColor;
+            overflow: hidden;
+            float: right;
+            animation: portrait-turn 4s linear infinite normal;
+            &:hover{
+              animation-play-state:paused;
+            }
+            >img{
+              width: 120px;
+              height: 120px;
+            }
+          }
         }
       }
     }
@@ -466,5 +482,15 @@ body{
   to {
     -webkit-transform: rotate(-320deg);
     opacity: 0;
+  }
+}
+
+/*头像转动animate*/
+@keyframes portrait-turn {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
