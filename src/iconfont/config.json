@@ -3039,6 +3039,198 @@
       ]
     },
     {
+      "uid": "e7ab5637425cce7dd2176302ddaf1c08",
+      "css": "music-1",
+      "code": 59579,
+      "src": "elusive"
+    },
+    {
+      "uid": "9ea0a737ccc45d6c510dcbae56058849",
+      "css": "music-2",
+      "code": 59580,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "ce06b5805120d0c2f8d60cd3f1a4fdb5",
+      "css": "play",
+      "code": 59581,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "b624a1e512819d410ddbee84e6918b9d",
+      "css": "stop",
+      "code": 59585,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "0b28050bac9d3facf2f0226db643ece0",
+      "css": "pause",
+      "code": 59586,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "b3d902fcead809e3a64c7ddcda497a6c",
+      "css": "fast-bw",
+      "code": 59587,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "4e511190b60f329d08301eb6869c5130",
+      "css": "fast-fw",
+      "code": 59588,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "8d2b91edcad12992a96fc5eac674700d",
+      "css": "play-outline",
+      "code": 59589,
+      "src": "typicons"
+    },
+    {
+      "uid": "4a770f766e0c1f06ce850db219684355",
+      "css": "stop-outline",
+      "code": 59590,
+      "src": "typicons"
+    },
+    {
+      "uid": "633072ff889a2ac52b162880e104550e",
+      "css": "pause-outline",
+      "code": 59591,
+      "src": "typicons"
+    },
+    {
+      "uid": "f7b9bc563b87218a2ed804cc71a6eb9c",
+      "css": "fast-fw-outline",
+      "code": 59592,
+      "src": "typicons"
+    },
+    {
+      "uid": "f54874f26664ff241013d7b74b930b3f",
+      "css": "rewind-outline",
+      "code": 59593,
+      "src": "typicons"
+    },
+    {
+      "uid": "1e29f134dfa565422897dacc67dee3e8",
+      "css": "record-outline",
+      "code": 59594,
+      "src": "typicons"
+    },
+    {
+      "uid": "c80828ee2c3fc55b3e58a2b5e6ebba91",
+      "css": "rewind",
+      "code": 59595,
+      "src": "typicons"
+    },
+    {
+      "uid": "94656a720f169a0fc78c5a942e0c7112",
+      "css": "fast-fw-1",
+      "code": 59596,
+      "src": "typicons"
+    },
+    {
+      "uid": "e44ef09cb81413287d702eefa65dd790",
+      "css": "pause-1",
+      "code": 59597,
+      "src": "typicons"
+    },
+    {
+      "uid": "0785c02e57804318c8fe070338f89cd9",
+      "css": "stop-1",
+      "code": 59598,
+      "src": "typicons"
+    },
+    {
+      "uid": "3e290a111c0f3ee3acbf7b5f17ccc04a",
+      "css": "play-1",
+      "code": 59599,
+      "src": "typicons"
+    },
+    {
+      "uid": "6c985c88b4c460d6c5a3e34d53361286",
+      "css": "record",
+      "code": 59600,
+      "src": "typicons"
+    },
+    {
+      "uid": "b1c81b3df9f4a9b8c393f405bb5293d8",
+      "css": "music-outline",
+      "code": 59601,
+      "src": "typicons"
+    },
+    {
+      "uid": "5rarhtgcreeh8evuaqd8zoekgehkt3mm",
+      "css": "music-3",
+      "code": 59602,
+      "src": "typicons"
+    },
+    {
+      "uid": "jskdfgyhjwd003ndercv4r08h0ai3dfg",
+      "css": "loop-alt",
+      "code": 59603,
+      "src": "typicons"
+    },
+    {
+      "uid": "36m3wq83tio3uymjbu44su7ior03u9cc",
+      "css": "shuffle",
+      "code": 59604,
+      "src": "typicons"
+    },
+    {
+      "uid": "e5297b06d9300be7e7c347f78a9b8b61",
+      "css": "headphones",
+      "code": 59621,
+      "src": "typicons"
+    },
+    {
+      "uid": "0a9d5a8bfa0ccfd44a38328b8ca276c2",
+      "css": "volume-off",
+      "code": 59622,
+      "src": "typicons"
+    },
+    {
+      "uid": "okc52fdxu9uz2wnl0awdtv5373is429s",
+      "css": "volume-high",
+      "code": 59623,
+      "src": "typicons"
+    },
+    {
+      "uid": "3bf8e868324f7efb93c7bde31be9cc5e",
+      "css": "volume-middle",
+      "code": 59624,
+      "src": "typicons"
+    },
+    {
+      "uid": "43m0a70tvxqc6q7jxgzhz5lmlt3ce2iy",
+      "css": "volume-low",
+      "code": 59625,
+      "src": "typicons"
+    },
+    {
+      "uid": "3e1bb74572a30486bd647304d9fcaff6",
+      "css": "lock",
+      "code": 59626,
+      "src": "typicons"
+    },
+    {
+      "uid": "75cff40f03567673e13b0e7d005b7741",
+      "css": "lock-open",
+      "code": 59627,
+      "src": "typicons"
+    },
+    {
+      "uid": "4x5p6fnblkhqsj4ibuc724faotghuiaq",
+      "css": "lock-filled",
+      "code": 59628,
+      "src": "typicons"
+    },
+    {
+      "uid": "a33vyvfsje6eklq8loqtzb1jcgo37onm",
+      "css": "lock-open-filled",
+      "code": 59629,
+      "src": "typicons"
+    },
+    {
       "uid": "f743d15a8661a835cb2230700e40a485",
       "css": ".notdef",
       "code": 59392,

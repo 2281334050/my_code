@@ -1,4 +1,4 @@
-@import "iconfont/css/iconfont";
+@import "iconfont/css/iconfont.css";
 @import "colorStyle";
 /*公共样式*/
 .mt5{
@@ -108,6 +108,29 @@ form,input,textarea,button,p,blockquote,th,td,hr {
   padding: 0;
 }
 ol,ul { list-style: none; }
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+::-webkit-scrollbar
+{
+  width: 16px;
+  height: 16px;
+  background-color: transparent;
+}
+
+/*定义滚动条轨道 内阴影+圆角*/
+::-webkit-scrollbar-track
+{
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+  border-radius: 10px;
+  background-color: transparent;
+}
+
+/*定义滑块 内阴影+圆角*/
+::-webkit-scrollbar-thumb
+{
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+  background-color: #555;
+}
 a{
   text-decoration: none;
 }
@@ -128,6 +151,161 @@ body{
 }
 /*main*/
 .main{
+  /*播放器*/
+  .player{
+    height: 600px;
+    width: 325px;
+    position: fixed;
+    right: -300px;
+    top: 120px;
+    background: @barBackgroundColor;
+    opacity: .9;
+    z-index: 100;
+    transition: .3s linear;
+    &:not(.out):hover{
+      right: 0;
+    }
+    &.out{
+      right: 0;
+    }
+    .fade-out{
+        float:left;
+        line-height: 600px;
+        text-align: center;
+        width: 25px;
+        color: @btnTextColor;
+    }
+    &:not(.out){
+      .fade-out{
+        animation: portrait-turn 2s linear infinite normal;
+      }
+    }
+    .video-box{
+      height:600px;
+      width: 300px;
+      float: right;
+      .top{
+        width: 300px;
+        text-align: center;
+        padding: 15px;
+        .pic{
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          border: 2px solid @borderColor;
+          overflow: hidden;
+          display: inline-block;
+          animation: portrait-turn 4s linear infinite normal;
+          &:hover{
+            animation-play-state:paused;
+          }
+          >img{
+            width: 120px;
+            height: 120px;
+          }
+        }
+        .name{
+          color: @TextColor;
+        }
+        .control{
+          min-height: 100px;
+          box-shadow: 0 0 1px @backgroundColor;
+          border-radius: 3px;
+          margin-top: 10px;
+          padding: 10px;
+          .progress-bar{
+            border-radius: 3px;
+            background: @backgroundColor;
+            width: 180px;
+            cursor: pointer;
+            display: inline-block;
+            >div{
+              height: 10px;
+              box-shadow: 0 0 10px @linkColor;
+              background: #fff;
+              border-radius: 3px;
+              transition: .3s linear;
+            }
+          }
+          .time{
+            margin-left: 10px;
+            display: inline-block;
+            width: 55px;
+            font-size: 5px;
+            color: @TextColor;
+          }
+          .btn{
+            margin-top: 10px;
+            height: 50px;
+            box-shadow: 0 0 1px @backgroundColor;
+            border-radius: 5px;
+            line-height: 50px;
+            .prev,.play,.next{
+              display: inline-block;
+              width: 40px;
+              box-shadow: 0 0 1px @backgroundColor;
+              height: 40px;
+              margin-left:10px;
+              text-align: center;
+              border-radius: 50%;
+              line-height: 40px;
+              color:@btnTextColor;
+              transition: .3s linear;
+              &:hover{
+                cursor: pointer;
+                background:@backgroundColor;
+              }
+            }
+          }
+        }
+        >a{
+          float: right;
+          color: @btnTextColor;
+          &:hover{
+            color: #fff;
+          }
+        }
+      }
+      .song-list{
+        height: 250px;
+        padding: 0px 20px 20px 20px;
+        margin-top: 20px;
+        text-align: left;
+        overflow: auto;
+        .item{
+          color: @btnTextColor;
+          .song-name{
+            display: inline-block;
+            color: @btnTextColor;
+            transition: .1s linear;
+            width: 100px;
+            text-overflow:ellipsis;
+            overflow:hidden;
+            white-space: nowrap;
+            &:hover{
+              color: lighten(@btnTextColor,50%);
+              text-decoration-line: underline;
+            }
+          }
+          .author-name{
+            float: right;
+            text-align: right;
+            width: 100px;
+            display: inline-block;
+            text-overflow:ellipsis;
+            overflow:hidden;
+            white-space: nowrap;
+          }
+          &.active{
+            .song-name{
+              color:@btnHoverColor;
+              animation: songs-playing 2s ease infinite normal;
+            }
+          }
+        }
+      }
+    }
+  }
   /*浮动显示的TopBar*/
   .top-Bar{
     position: fixed;
@@ -492,5 +670,30 @@ body{
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+/*音乐版块按钮*/
+@keyframes music-icon {
+  from {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1.0;
+  }
+  to {
+    opacity: 0.2;
+  }
+}
+/*歌曲正在播放*/
+@keyframes songs-playing {
+  from {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1.0;
+  }
+  to {
+    opacity: 0.2;
   }
 }

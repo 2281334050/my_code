@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+import qs from 'qs';
 import {
     BrowserRouter as Router,
     Route,
@@ -18,7 +20,6 @@ class App extends Component {
         super(props);
         this.state = {
             className:'hide',
-            isLoading:false
         }
     }
     componentDidMount(){
@@ -38,6 +39,7 @@ class App extends Component {
   render() {
     return (
       <div className={`main`}>
+          <MusicPlayer />
           <Router>
               <div className={`main-content`}>
                   <TopBar class={this.state.className}/>
@@ -73,10 +75,6 @@ class Create extends Component{
             title:'',
             currentElem:0//当前选中的按钮
         }
-    }
-    componentDidMount(){
-        console.log(this.props.location)
-
     }
     handleClick=(e)=>{
         const title = e.target.getAttribute('label');
@@ -397,5 +395,169 @@ function Modal (props) {
             </div>
         </div>
     )
+}
+/*音乐播放器主体*/
+class MusicPlayer extends Component{
+    constructor(props){
+        super(props);
+        this.state={
+            songListId:374790492,
+            songList:[],
+            src:'',/*音频文件地址*/
+            currentTime:0,/*音频当前播放时间s*/
+            volume:0,/*音量*/
+            muted:false,/*静音*/
+            progress:0,/*进度条显示的进度*/
+            pic:'https://api.hibai.cn/music/Music/Music?id=29719782&type=pic',
+            songName:'사뿐사뿐',
+        /*以下是只读属性*/
+            duration:0,/*媒体的时长S为单位*/
+            paused:false,/*暂停是true,反之false*/
+            currentSong:0,//当前播放的歌曲，从0开始计
+            lockState:false,
+        }
+    }
+    componentDidMount(){
+        let param = `{"TransCode":"020112","OpenId":"Test","Body":{"SongListId":"${this.state.songListId}"}}`;
+         let params = JSON.parse(param);
+      axios({
+          method:'post',
+          url:'https://api.hibai.cn/api/index/index',
+          headers:{
+              'Content-Type':'application/x-www-form-urlencoded'/*axios跨域请求头部*/
+          },
+         data:qs.stringify(params),/*使用跨域头部过后，参数需要引用qs*/
+      }).then((res)=>{
+          if(res.status === 200){
+              this.setState({
+                  songList:res.data.Body,
+                  src:res.data.Body[this.state.currentSong].url
+              })
+          }
+      })
+    }
+    setProgress=(progress,currentTime)=>{
+        this.setState({
+            progress:progress*100,
+            currentTime:currentTime
+        })
+    }
+    dragDropHandler=(e)=>{
+        let progress = parseFloat((e.clientX-(document.documentElement.clientWidth-93-180))/180);/*点击时获取的进度条百分比*/
+        let currentTime = Math.floor(this.state.duration * progress);/*选中的秒数*/
+        if(progress < 0 || currentTime < 0){
+            this.setProgress(0,0)/*进度条刷新并刷新当前秒数*/
+        }else if(progress > 1){
+            this.setProgress(1,Math.floor(this.state.duration * 1))/*进度条刷新并刷新当前秒数*/
+        }else{
+            this.setProgress(progress,currentTime)/*进度条刷新并刷新当前秒数*/
+        }
+        this.refs.audio.currentTime=currentTime;
+    }
+    putPaused=()=>{/*暂停 播放*/
+        if(this.refs.audio.paused) {
+            this.refs.audio.play();
+        }else{
+            this.refs.audio.pause();
+        }
+        this.setState({paused:this.refs.audio.paused});
+    }
+    audioChange=(e)=>{
+        console.log(e.type)
+        switch (e.type){
+            case 'canplay':{
+                let duration = parseInt(this.refs.audio.duration);
+                let pic  = this.state.songList[this.state.currentSong].pic;
+                let songName = this.state.songList[this.state.currentSong].title;
+                let readyState = this.refs.audio.readyState;
+                if(readyState === 4 && duration >1){
+                    this.setState({/*设置专辑封面，歌名，歌手*/
+                        duration:duration,
+                        pic:pic,
+                        songName:songName
+                    })
+                    this.refs.audio.play();
+                    this.setState({paused:this.refs.audio.paused});
+                }else{
+                    this.nextMusic();
+                }
+                break;
+            }
+            case 'ended':{/*音频结束之后触发*/
+                this.nextMusic();
+                break
+            }
+            case 'timeupdate':{/*正在播放中*/
+                let readyState = this.refs.audio.readyState;
+                if(readyState === 4){/*audio.buffered.end 必须在 audio 对象获取到信息时才可以使用*/
+                    //console.log(this.refs.audio.buffered.end(0));
+                }
+                this.setProgress(parseInt(this.refs.audio.currentTime)/this.state.duration,parseInt(this.refs.audio.currentTime));
+                break
+            }
+        }
+    }
+    PrevMusic = ()=>{//上一曲
+        this.setState({
+            src:this.state.songList[this.state.currentSong > 0 ? this.state.currentSong-1 : 0].url,
+            currentSong:this.state.currentSong > 0 ? this.state.currentSong-1 : 0
+        })
+    }
+    nextMusic = ()=>{//下一曲
+        this.setState({
+            src:this.state.songList[this.state.currentSong < this.state.songList.length ? this.state.currentSong+1 : 0].url,
+            currentSong:this.state.currentSong < this.state.songList.length ? this.state.currentSong+1 : 0
+        })
+    }
+    setLock = ()=>{//锁
+        this.setState((prevState)=>({lockState:!prevState.lockState}))
+    }
+    render(){
+        return(
+            <div className={`player ${this.state.lockState ? 'out':''}`}>
+                <a href="javascript:" className={`fade-out`}>
+                    <i className={`icon-arrange-class`}></i>
+                </a>
+                <div className={`video-box`}>
+                    <div className={`top`}>
+                        <a href="javascript:" onClick={this.setLock} className={`${this.state.lockState ? 'icon-lock':'icon-lock-open'}`}>{}</a>
+                        <audio
+                            ref={`audio`}
+                            onCanPlay={this.audioChange}
+                            onAbort={this.audioChange}
+                            onTimeUpdate={this.audioChange}
+                            onSeeked={this.audioChange}
+                            onEnded={this.audioChange}
+                            onError={this.audioChange}
+                            src={this.state.src}>{}</audio>
+                        <div className={`pic`}>
+                            <img src={this.state.pic} alt=""/>
+                        </div>
+                        <p className={`name`}>{this.state.songName}</p>
+                        <div className={`control`}>
+                            <div className={`progress-bar`} onClick={this.dragDropHandler}>
+                                <div style={{width:this.state.progress+'%'}}>
+                                </div>
+                            </div>
+                            <span className={`time`}>{`${parseInt(this.state.currentTime/60)%60<10 ?'0'+parseInt(this.state.currentTime/60)%60:parseInt(this.state.currentTime/60)%60}:${this.state.currentTime%60 < 10 ? '0' + this.state.currentTime%60 : this.state.currentTime%60}/${parseInt(this.state.duration/60)%60 < 10 ? '0'+parseInt(this.state.duration/60)%60:parseInt(this.state.duration/60)%60}:${this.state.duration%60 < 10 ? '0'+this.state.duration%60 :this.state.duration%60}`}</span>
+                            <div className={`btn`}>
+                                <div onClick={this.PrevMusic} className={`prev`}><i className={` icon-rewind`}></i></div>
+                                <div onClick={this.putPaused} className={`play`}><i className={!this.state.paused ? "icon-pause-1" : " icon-play-1"}></i></div>
+                                <div onClick={this.nextMusic} className={`next`}><i className={` icon-fast-fw-1`}></i></div>
+                            </div>
+                        </div>
+                    </div>
+                    <ul className={`song-list`}>
+                        {this.state.songList.map((value,key)=> {
+                            return <li key={key} className={`item ${this.state.currentSong === key ? 'active':''}`}>
+                                        <a href="#" className={`song-name`}>{value.title}</a>
+                                        <span className={`author-name`}>{value.author}</span>
+                                    </li>
+                        })}
+                    </ul>
+                </div>
+            </div>
+        )
+    }
 }
 export default App;
