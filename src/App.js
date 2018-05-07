@@ -13,7 +13,9 @@ const requireContext = require.context("./img",true);
 const images = requireContext.keys().map(requireContext);
 ImageData.map(function (item,i) {
     item.url=images[i]
-})
+});
+const songEmpty = require('./img/song_empty.png');
+console.log(songEmpty);
 /*页面主体*/
 class App extends Component {
     constructor(props){
@@ -126,7 +128,6 @@ class  PhotoRoute extends Component{
         this.changePic(key);
     }
     changePic = (key)=>{ /*公共改变图片方法*/
-        console.log(key)
         if(key !== null){
             this.setState({
                 ModalUrl:`http://localhost:3000/${ImageData[parseInt(key)].url}`,
@@ -401,20 +402,24 @@ class MusicPlayer extends Component{
     constructor(props){
         super(props);
         this.state={
-            songListId:374790492,
+            songListId:2211525733,
             songList:[],
             src:'',/*音频文件地址*/
             currentTime:0,/*音频当前播放时间s*/
             volume:0,/*音量*/
             muted:false,/*静音*/
             progress:0,/*进度条显示的进度*/
-            pic:'https://api.hibai.cn/music/Music/Music?id=29719782&type=pic',
-            songName:'사뿐사뿐',
+            pic:'',
+            songName:'未知',
         /*以下是只读属性*/
             duration:0,/*媒体的时长S为单位*/
             paused:false,/*暂停是true,反之false*/
             currentSong:0,//当前播放的歌曲，从0开始计
-            lockState:false,
+            lockState:false,//音乐窗口锁
+            songLrc:[],//歌词
+            songLrcShow:false,//显示歌词
+            currentLrc:0,//当前第几句歌词
+
         }
     }
     componentDidMount(){
@@ -463,13 +468,15 @@ class MusicPlayer extends Component{
         this.setState({paused:this.refs.audio.paused});
     }
     audioChange=(e)=>{
-        console.log(e.type)
+        //console.log(e.type)
         switch (e.type){
             case 'canplay':{
                 let duration = parseInt(this.refs.audio.duration);
                 let pic  = this.state.songList[this.state.currentSong].pic;
                 let songName = this.state.songList[this.state.currentSong].title;
                 let readyState = this.refs.audio.readyState;
+                this.refs.musicBox.scrollTop = this.refs.currentSong.offsetHeight * this.state.currentSong;/*计算元素距离顶部高度，保证切换下一曲时，当前播放歌曲能显示在最顶部*/
+                this.parseLyric();
                 if(readyState === 4 && duration >1){
                     this.setState({/*设置专辑封面，歌名，歌手*/
                         duration:duration,
@@ -492,25 +499,84 @@ class MusicPlayer extends Component{
                 if(readyState === 4){/*audio.buffered.end 必须在 audio 对象获取到信息时才可以使用*/
                     //console.log(this.refs.audio.buffered.end(0));
                 }
+                for(let i =0;i<this.state.songLrc.length;i++){
+                     if(parseInt(this.refs.audio.currentTime) > this.state.songLrc[i][0]){
+                        this.setState({currentLrc:i});
+                        if('currentLrc' in  this.refs){
+                            this.refs.lrcBox.scrollTop = (this.refs.currentLrc.offsetHeight * this.state.currentLrc)-60;
+                        }
+                     }
+                }
                 this.setProgress(parseInt(this.refs.audio.currentTime)/this.state.duration,parseInt(this.refs.audio.currentTime));
                 break
             }
         }
-    }
+    };
     PrevMusic = ()=>{//上一曲
         this.setState({
             src:this.state.songList[this.state.currentSong > 0 ? this.state.currentSong-1 : 0].url,
             currentSong:this.state.currentSong > 0 ? this.state.currentSong-1 : 0
         })
-    }
+    };
     nextMusic = ()=>{//下一曲
         this.setState({
-            src:this.state.songList[this.state.currentSong < this.state.songList.length ? this.state.currentSong+1 : 0].url,
-            currentSong:this.state.currentSong < this.state.songList.length ? this.state.currentSong+1 : 0
+            src:this.state.songList[this.state.currentSong < this.state.songList.length-1 ? this.state.currentSong+1 : 0].url,
+            currentSong:this.state.currentSong < this.state.songList.length-1 ? this.state.currentSong+1 : 0
         })
-    }
+    };
     setLock = ()=>{//锁
         this.setState((prevState)=>({lockState:!prevState.lockState}))
+    };
+    parseLyric =()=>{//取歌词
+        let result = [];
+        this.setState({songLrc:[]});//清空歌词
+        axios({
+            url:this.state.songList[this.state.currentSong].lrc,
+            method:'get'
+        }).then((res)=>{
+            if(res.status === 200){
+                if(res.data === '暂无歌词'){
+                    return
+                }
+                let lines = res.data.split('\n'),
+                    pattern = /\[([0-9]+:[0-9]+.[0-9]+)\]/g;
+                while (!pattern.test(lines[0])){
+                    lines = lines.slice(1);
+                }
+                lines[lines.length - 1].length === 0 && lines.pop();
+                lines.forEach(function (v) {
+                    let time = v.match(pattern),//分割出时间
+                        value = v.replace(pattern,'');//分割出歌词
+                    time.forEach(function (v1) {
+                        let t = v1.slice(1,-1).split(':');//从时间分割出分钟
+                        result.push([parseInt(t[0],10) * 60 + parseFloat(t[1]),value])//将时间化为秒数及对应歌词放入数组
+                    })
+                });
+                result.forEach(function (v,k) {
+                    if(v[1]===''){
+                        result.splice(k,1)
+                    }
+                })
+                result.sort(function (a,b) {
+                    return a[0] -b[0]
+                });
+                this.setState({songLrc:result})
+            }
+        })
+    };
+    showLrc = () =>{
+       this.setState((prevState)=>({
+           songLrcShow:!prevState.songLrcShow
+       }))
+    }
+    chooseMusic = (e)=>{
+        e.preventDefault();
+        let num = parseInt(e.target.getAttribute('href'));
+        this.setState({
+            src:this.state.songList[num].url,
+            currentSong:num
+        })
+
     }
     render(){
         return(
@@ -530,9 +596,17 @@ class MusicPlayer extends Component{
                             onEnded={this.audioChange}
                             onError={this.audioChange}
                             src={this.state.src}>{}</audio>
-                        <div className={`pic`}>
-                            <img src={this.state.pic} alt=""/>
+                        <div className={`pic ${this.state.songLrcShow ? 'lrc-show' : ''}`}>
+                            <img src={this.state.pic === '' ? songEmpty : this.state.pic} alt="专辑封面"/>
                         </div>
+                        <ul ref={`lrcBox`} onClick={this.showLrc} className={`song-lrc ${this.state.songLrcShow ? 'lrc-show' : ''}`}>
+                            {
+                                this.state.songLrc.length ===0 ? <li className={`no-lrc`}>暂无歌词</li>: this.state.songLrc.map((v,k)=>{
+                                  return <li ref={`${this.state.currentLrc === k ? 'currentLrc':''}`} className={`${this.state.currentLrc === k ? 'current':''}`} key={k}>{v[1]}</li>
+                                        })
+
+                            }
+                        </ul>
                         <p className={`name`}>{this.state.songName}</p>
                         <div className={`control`}>
                             <div className={`progress-bar`} onClick={this.dragDropHandler}>
@@ -547,10 +621,10 @@ class MusicPlayer extends Component{
                             </div>
                         </div>
                     </div>
-                    <ul className={`song-list`}>
+                    <ul ref={`musicBox`} className={`song-list`}>
                         {this.state.songList.map((value,key)=> {
-                            return <li key={key} className={`item ${this.state.currentSong === key ? 'active':''}`}>
-                                        <a href="#" className={`song-name`}>{value.title}</a>
+                            return <li key={key} ref={`${this.state.currentSong === key ?'currentSong':''}`} className={`item ${this.state.currentSong === key ? 'active':''}`}>
+                                        <a onClick={this.chooseMusic} href={key} className={`song-name`}>{value.title}</a>
                                         <span className={`author-name`}>{value.author}</span>
                                     </li>
                         })}

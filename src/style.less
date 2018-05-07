@@ -188,6 +188,7 @@ body{
         width: 300px;
         text-align: center;
         padding: 15px;
+        position: relative;
         .pic{
           width: 120px;
           height: 120px;
@@ -196,12 +197,43 @@ body{
           overflow: hidden;
           display: inline-block;
           animation: portrait-turn 4s linear infinite normal;
+          transition: .3s linear;
           &:hover{
             animation-play-state:paused;
+          }
+          &.lrc-show{
+            filter: blur(3px);
           }
           >img{
             width: 120px;
             height: 120px;
+          }
+        }
+        .song-lrc{
+          float: left;
+          width: 250px;
+          height: 120px;
+          position: absolute;
+          top: 15px;
+          opacity: 0;
+          transition: .3s linear;
+          overflow: hidden;
+          >li{
+           color: @TextColor;
+            line-height: 30px;
+            font-size: 12px;
+            transition: .3s linear;
+            &.current{
+              color: @linkColor;
+              font-size: 14px;
+            }
+            &.no-lrc{
+              font-size: 18px;
+              line-height: 120px;
+            }
+          }
+          &.lrc-show{
+            opacity: 1;
           }
         }
         .name{
@@ -279,12 +311,12 @@ body{
             color: @btnTextColor;
             transition: .1s linear;
             width: 100px;
+            font-size: 14px;
             text-overflow:ellipsis;
             overflow:hidden;
             white-space: nowrap;
             &:hover{
               color: lighten(@btnTextColor,50%);
-              text-decoration-line: underline;
             }
           }
           .author-name{
