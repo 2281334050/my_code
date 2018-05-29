@@ -9,13 +9,14 @@ import {
 } from 'react-router-dom';
 import './style.less';
 import ImageData from './imageData';
+import SkillData from './skillData';
 const requireContext = require.context("./img",true);
 const images = requireContext.keys().map(requireContext);
 ImageData.map(function (item,i) {
     item.url=images[i]
 });
 const songEmpty = require('./img/song_empty.png');
-console.log(songEmpty);
+
 /*页面主体*/
 class App extends Component {
     constructor(props){
@@ -130,7 +131,7 @@ class  PhotoRoute extends Component{
     changePic = (key)=>{ /*公共改变图片方法*/
         if(key !== null){
             this.setState({
-                ModalUrl:`http://localhost:3000/${ImageData[parseInt(key)].url}`,
+                ModalUrl:`http://localhost:3000/${ImageData[parseInt(key)].url ? ImageData[parseInt(key)].url : ''}`,
                 ImgTitle:ImageData[parseInt(key)].title,
                 picKey:parseInt(key)
             })
@@ -167,24 +168,53 @@ class  PhotoRoute extends Component{
 
 function Image(props) {
     return(
-        <img  src={props.url} data-key={props.k} style={{height:props.styles.h,width:props.styles.w}}/>
+        <img alt={`相片`} src={props.url} data-key={props.k} style={{height:props.styles.h,width:props.styles.w}}/>
     )
 }
 
 /*技能页*/
 class Skill extends Component {
     constructor(props){
-        super(props)
+        super(props);
+        this.state={
+            start:false
+        }
+    }
+    componentDidMount(){
+        setTimeout( ()=> {
+            this.setState({start:true})
+        },100)
     }
     render(){
         return(
-            <div>
+            <div className={`skill`}>
                 <ScrollToTopOnMount/>
-                <h1>Skill</h1>
+                <h2>各项技能指数</h2>
+                <div className={`skill-content`}>
+                    {
+                        SkillData.map((v,k)=>(
+                            <SkillBar key={k} barWith={v.bar_with} state={this.state.start} name={v.name}/>
+                        ))
+                    }
+                </div>
+                <div className={`skill-context`}>
+                    使用的技术栈方面，因为本身一开始学习的就是原生的JS以及BOM和DOM，所以基础的知识比较牢的，后续用到了一些框架，比如像PHP的CI框架，这种MVC的，后续就用了像React和Vue，然后自己本身也很喜欢MVC类型的框架。对技术来说也有自己的追求，自己造轮子自己用也是自己的目标，现在偶尔偷偷轮子看看源码，也学习过一切后端语言，像Python，.go。
+                </div>
             </div>
 
         )
     }
+}
+    /*技能条*/
+function SkillBar(props) {
+    return(
+        <div className={`skill-chart`}>
+            <div className={`skill-bar ${props.name}`} style={{width:`${props.state && props.barWith}%`}}>
+                <span></span>
+            </div>
+            <p className={`skill-name`}>{props.name}</p>
+        </div>
+    )
 }
 /*个人项目页*/
 class PersonalProjects extends Component{
@@ -379,16 +409,16 @@ function Modal (props) {
                         if(props.picKey>0 && props.picKey < ImageData.length-1){
                             return(
                                 <div>
-                                    <a href={`javascript:`} direction={-1} onClick={props.turnPage} className={`left-tick  icon-left-arrow`}></a>
-                                    <a href={`javascript:`} direction={1} onClick={props.turnPage} className={`right-tick  icon-left-arrow`}></a>
+                                    <a href={`javascript:`} direction={-1} onClick={props.turnPage} className={`left-tick  icon-left-arrow`}> </a>
+                                    <a href={`javascript:`} direction={1} onClick={props.turnPage} className={`right-tick  icon-left-arrow`}> </a>
                                 </div>
                                 )
 
                         }else{
                             if(props.picKey === 0){
-                               return <a href={`javascript:;`} direction={1} onClick={props.turnPage} className={`right-tick  icon-left-arrow`}></a>
+                               return <a href={`javascript:;`} direction={1} onClick={props.turnPage} className={`right-tick  icon-left-arrow`}> </a>
                             }else if(props.picKey === ImageData.length-1){
-                                return <a href={`javascript:;`} direction={-1} onClick={props.turnPage} className={`left-tick  icon-left-arrow`}></a>
+                                return <a href={`javascript:;`} direction={-1} onClick={props.turnPage} className={`left-tick  icon-left-arrow`}> </a>
                             }
                         }
                     }()
@@ -468,8 +498,11 @@ class MusicPlayer extends Component{
         this.setState({paused:this.refs.audio.paused});
     }
     audioChange=(e)=>{
-        //console.log(e.type)
+        console.log(e.type);
         switch (e.type){
+            case 'abort':{
+
+            }
             case 'canplay':{
                 let duration = parseInt(this.refs.audio.duration);
                 let pic  = this.state.songList[this.state.currentSong].pic;
@@ -509,6 +542,9 @@ class MusicPlayer extends Component{
                 }
                 this.setProgress(parseInt(this.refs.audio.currentTime)/this.state.duration,parseInt(this.refs.audio.currentTime));
                 break
+            }
+            default:{
+                console.log('default');
             }
         }
     };
