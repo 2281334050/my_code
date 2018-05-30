@@ -519,14 +519,14 @@ class MusicPlayer extends Component{
                 let duration = parseInt(this.refs.audio.duration);
                 let pic  = this.state.songList[this.state.currentSong].pic;
                 let songName = this.state.songList[this.state.currentSong].title;
-                this.refs.musicBox.scrollTop = this.refs.currentSong.offsetHeight * this.state.currentSong;/*计算元素距离顶部高度，保证切换下一曲时，当前播放歌曲能显示在最顶部*/
+                this.refs.musicBox.scrollTop = this.refs.currentSong.refs.currentSong.offsetHeight * this.state.currentSong;/*计算元素距离顶部高度，保证切换下一曲时，当前播放歌曲能显示在最顶部*/
                 this.parseLyric();
                     this.setState({/*设置专辑封面，歌名，歌手*/
                         duration:duration,
                         pic:pic,
                         songName:songName
                     });
-                    this.refs.audio.play()
+                    this.refs.audio.play();
                     this.setState({paused:this.refs.audio.paused});
                 break;
             }
@@ -542,8 +542,8 @@ class MusicPlayer extends Component{
                 for(let i =0;i<this.state.songLrc.length;i++){
                      if(parseInt(this.refs.audio.currentTime) > this.state.songLrc[i][0]){
                         this.setState({currentLrc:i});
-                        if('currentLrc' in  this.refs){
-                            this.refs.lrcBox.scrollTop = (this.refs.currentLrc.offsetHeight * this.state.currentLrc)-60;
+                        if(this.refs.hasOwnProperty('currentLrc')){
+                            this.refs.lrcBox.scrollTop = (this.refs.currentLrc.refs.currentLrc.offsetHeight * this.state.currentLrc)-60;
                         }
                      }
                 }
@@ -644,7 +644,7 @@ class MusicPlayer extends Component{
                         <ul ref={`lrcBox`} onClick={this.showLrc} className={`song-lrc ${this.state.songLrcShow ? 'lrc-show' : ''}`}>
                             {
                                 this.state.songLrc.length ===0 ? <li className={`no-lrc`}>暂无歌词</li>: this.state.songLrc.map((v,k)=>{
-                                  return <li ref={`${this.state.currentLrc === k ? 'currentLrc':''}`} className={`${this.state.currentLrc === k ? 'current':''}`} key={k}>{v[1]}</li>
+                                  return <SongLrc  key={k} LrcInfo={v[1]} index={k} currentLrc={this.state.currentLrc} ref={`${this.state.currentLrc === k ? 'currentLrc':''}`}/>
                                         })
 
                             }
@@ -664,15 +664,52 @@ class MusicPlayer extends Component{
                         </div>
                     </div>
                     <ul ref={`musicBox`} className={`song-list`}>
-                        {this.state.songList.map((value,key)=> {
-                            return <li title={value.hasOwnProperty('cannotPlay') && value.cannotPlay===false ? '该歌曲存在版权问题不可播放' : '点击播放该歌曲'} key={key} ref={`${this.state.currentSong === key ?'currentSong':''}`} className={`item ${value.hasOwnProperty('cannotPlay') && value.cannotPlay===false ? 'playDisabled' : ''} ${this.state.currentSong === key ? 'active':''}`}>
-                                        <a  onClick={this.chooseMusic} href={key} className={`song-name`}>{value.title}</a>
-                                        <span className={`${value.hasOwnProperty('cannotPlay') && value.cannotPlay===false ? 'playDisabled' : ''} author-name`}>{value.author}</span>
-                                    </li>
-                        })}
+                        {
+                            this.state.songList.map((value,key)=>(
+                                <Song chooseMusic={this.chooseMusic} songInfo={value} key={key} index={key} currentSong={this.state.currentSong} ref={`${this.state.currentSong === key ?'currentSong':''}`}/>
+                            ))
+                        }
                     </ul>
                 </div>
             </div>
+        )
+    }
+}
+/*歌词列表，列表分出，做优化操作*/
+class SongLrc extends Component{
+    constructor(props){
+        super(props)
+    }
+    shouldComponentUpdate(nextProps){ //*优化内存处理，当歌曲发生改变时，才去再次渲染歌词列表*//
+        if(nextProps.currentLrc===this.props.currentLrc){
+            return false
+        }else{
+            return true
+        }
+    }
+    render(){
+        return <li ref={`${this.props.currentLrc === this.props.index ? 'currentLrc':''}`} className={`${this.props.currentLrc === this.props.index ? 'current':''}`} key={this.props.index}>{this.props.LrcInfo}</li>
+    }
+}
+/*播放的歌曲列表,列表分出，可进行部分优化操作*/
+class Song extends Component{
+    constructor(props){
+        super(props);
+    }
+    shouldComponentUpdate(nextProps,nextState){/*优化内存处理，当歌曲发生改变时，才去再次渲染列表*/
+        if(nextProps.currentSong===this.props.currentSong) {
+            return false
+        }else{
+            return true
+        }
+    }
+    render(){
+        return(
+                 <li title={this.props.songInfo.hasOwnProperty('cannotPlay') && this.props.songInfo.cannotPlay===false ? '该歌曲存在版权问题不可播放' : '点击播放该歌曲'}  ref={`${this.props.currentSong === this.props.index ?'currentSong':''}`}  className={`item ${this.props.songInfo.hasOwnProperty('cannotPlay') && this.props.songInfo.cannotPlay===false ? 'playDisabled' : ''}  ${this.props.currentSong === this.props.index ? 'active':''}`}>
+                    <a  onClick={this.props.chooseMusic} href={this.props.index} className={`song-name`}>{this.props.songInfo.title}</a>
+                    <span className={`${this.props.songInfo.hasOwnProperty('cannotPlay') && this.props.songInfo.cannotPlay===false ? 'playDisabled' : ''} author-name`}>{this.props.songInfo.author}</span>
+                </li>
+
         )
     }
 }
