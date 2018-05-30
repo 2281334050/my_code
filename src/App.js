@@ -507,7 +507,7 @@ class MusicPlayer extends Component{
                     if(this.refs.audio.networkState===3){
                         this.setState((prevState)=>{//因为回调函数会造成state的延迟响应，所以下面这句要放在外面写↓
                                 let state = prevState.songList.concat(prevState.songList[this.state.currentSong].cannotPlay=false);
-                               ({songList:state})
+                               return {songList:state}
                             }
                         );
                         this.nextMusic()
@@ -665,9 +665,9 @@ class MusicPlayer extends Component{
                     </div>
                     <ul ref={`musicBox`} className={`song-list`}>
                         {this.state.songList.map((value,key)=> {
-                            return <li title={'cannotPlay' in value && value.cannotPlay===false ? '该歌曲存在版权问题不可播放' : '点击播放该歌曲'} key={key} ref={`${this.state.currentSong === key ?'currentSong':''}`} className={`item ${'cannotPlay' in value && value.cannotPlay===false ? 'playDisabled' : ''} ${this.state.currentSong === key ? 'active':''}`}>
+                            return <li title={value.hasOwnProperty('cannotPlay') && value.cannotPlay===false ? '该歌曲存在版权问题不可播放' : '点击播放该歌曲'} key={key} ref={`${this.state.currentSong === key ?'currentSong':''}`} className={`item ${value.hasOwnProperty('cannotPlay') && value.cannotPlay===false ? 'playDisabled' : ''} ${this.state.currentSong === key ? 'active':''}`}>
                                         <a  onClick={this.chooseMusic} href={key} className={`song-name`}>{value.title}</a>
-                                        <span className={`${'cannotPlay' in value && value.cannotPlay===false ? 'playDisabled' : ''} author-name`}>{value.author}</span>
+                                        <span className={`${value.hasOwnProperty('cannotPlay') && value.cannotPlay===false ? 'playDisabled' : ''} author-name`}>{value.author}</span>
                                     </li>
                         })}
                     </ul>
