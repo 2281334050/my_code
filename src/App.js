@@ -432,7 +432,7 @@ class MusicPlayer extends Component{
     constructor(props){
         super(props);
         this.state={
-            songListId:2211525733,
+            songListId:694628395,
             songList:[],
             src:'',/*音频文件地址*/
             currentTime:0,/*音频当前播放时间s*/
@@ -453,7 +453,7 @@ class MusicPlayer extends Component{
         }
     }
     componentDidMount(){
-        let param = `{"TransCode":"020112","OpenId":"Test","Body":{"SongListId":"${this.state.songListId}"}}`;
+        let param = `{"TransCode":"020331","OpenId":"Test","Body":{"SongListId":"${this.state.songListId}"}}`;
          let params = JSON.parse(param);
       axios({
           method:'post',
@@ -498,29 +498,36 @@ class MusicPlayer extends Component{
         this.setState({paused:this.refs.audio.paused});
     }
     audioChange=(e)=>{
-        console.log(e.type);
         switch (e.type){
             case 'abort':{
-
+                break;
+            }
+            case 'error':{
+                if(this.state.src !== ''){
+                    if(this.refs.audio.networkState===3){
+                        this.setState((prevState)=>{//因为回调函数会造成state的延迟响应，所以下面这句要放在外面写↓
+                                let state = prevState.songList.concat(prevState.songList[this.state.currentSong].cannotPlay=false);
+                               ({songList:state})
+                            }
+                        );
+                        this.nextMusic()
+                    }//如果当前资源地址不可用，跳下一曲
+                }
+                break;
             }
             case 'canplay':{
                 let duration = parseInt(this.refs.audio.duration);
                 let pic  = this.state.songList[this.state.currentSong].pic;
                 let songName = this.state.songList[this.state.currentSong].title;
-                let readyState = this.refs.audio.readyState;
                 this.refs.musicBox.scrollTop = this.refs.currentSong.offsetHeight * this.state.currentSong;/*计算元素距离顶部高度，保证切换下一曲时，当前播放歌曲能显示在最顶部*/
                 this.parseLyric();
-                if(readyState === 4 && duration >1){
                     this.setState({/*设置专辑封面，歌名，歌手*/
                         duration:duration,
                         pic:pic,
                         songName:songName
-                    })
-                    this.refs.audio.play();
+                    });
+                    this.refs.audio.play()
                     this.setState({paused:this.refs.audio.paused});
-                }else{
-                    this.nextMusic();
-                }
                 break;
             }
             case 'ended':{/*音频结束之后触发*/
@@ -612,7 +619,6 @@ class MusicPlayer extends Component{
             src:this.state.songList[num].url,
             currentSong:num
         })
-
     }
     render(){
         return(
@@ -659,9 +665,9 @@ class MusicPlayer extends Component{
                     </div>
                     <ul ref={`musicBox`} className={`song-list`}>
                         {this.state.songList.map((value,key)=> {
-                            return <li key={key} ref={`${this.state.currentSong === key ?'currentSong':''}`} className={`item ${this.state.currentSong === key ? 'active':''}`}>
-                                        <a onClick={this.chooseMusic} href={key} className={`song-name`}>{value.title}</a>
-                                        <span className={`author-name`}>{value.author}</span>
+                            return <li title={'cannotPlay' in value && value.cannotPlay===false ? '该歌曲存在版权问题不可播放' : '点击播放该歌曲'} key={key} ref={`${this.state.currentSong === key ?'currentSong':''}`} className={`item ${'cannotPlay' in value && value.cannotPlay===false ? 'playDisabled' : ''} ${this.state.currentSong === key ? 'active':''}`}>
+                                        <a  onClick={this.chooseMusic} href={key} className={`song-name`}>{value.title}</a>
+                                        <span className={`${'cannotPlay' in value && value.cannotPlay===false ? 'playDisabled' : ''} author-name`}>{value.author}</span>
                                     </li>
                         })}
                     </ul>
