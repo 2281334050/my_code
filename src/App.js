@@ -223,9 +223,12 @@ class PersonalProjects extends Component{
     }
     render(){
         return(
-            <div>
+            <div className={`PersonalProjects`}>
                 <ScrollToTopOnMount/>
-                <h1>PersonalProjects</h1>
+                <h2>关于做过的项目</h2>
+                <div className={`project-item`}>
+
+                </div>
             </div>
         )
     }
@@ -444,7 +447,7 @@ class MusicPlayer extends Component{
         /*以下是只读属性*/
             duration:0,/*媒体的时长S为单位*/
             paused:false,/*暂停是true,反之false*/
-            currentSong:0,//当前播放的歌曲，从0开始计
+            currentSong:sessionStorage.hasOwnProperty('currentSong')?parseInt(sessionStorage.getItem('currentSong')):0,//当前播放的歌曲，从0开始计
             lockState:false,//音乐窗口锁
             songLrc:[],//歌词
             songLrcShow:false,//显示歌词
@@ -520,6 +523,7 @@ class MusicPlayer extends Component{
                 let pic  = this.state.songList[this.state.currentSong].pic;
                 let songName = this.state.songList[this.state.currentSong].title;
                 this.refs.musicBox.scrollTop = this.refs.currentSong.refs.currentSong.offsetHeight * this.state.currentSong;/*计算元素距离顶部高度，保证切换下一曲时，当前播放歌曲能显示在最顶部*/
+                sessionStorage.setItem('currentSong',this.state.currentSong);//将当前播放歌曲加入缓存
                 this.parseLyric();
                     this.setState({/*设置专辑封面，歌名，歌手*/
                         duration:duration,
