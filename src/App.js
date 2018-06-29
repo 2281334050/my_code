@@ -531,7 +531,11 @@ class MusicPlayer extends Component{
                         pic:pic,
                         songName:songName
                     });
-                    this.refs.audio.play();
+                    this.refs.audio.play().catch(function (error) {
+                        //这里为了处理异常的dom用catch错误，原因是safari浏览器不支持autoplay
+                        //console.log(error)
+                    })
+                    //console.log(playPromise);
                     this.setState({paused:this.refs.audio.paused});
                 break;
             }
