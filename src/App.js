@@ -132,7 +132,7 @@ class  PhotoRoute extends Component{
     changePic = (key)=>{ /*公共改变图片方法*/
         if(key !== null){
             this.setState({
-                ModalUrl:`http://localhost:3000/${ImageData[parseInt(key)].url ? ImageData[parseInt(key)].url : ''}`,
+                ModalUrl:`http://localhost/${ImageData[parseInt(key)].url ? ImageData[parseInt(key)].url : ''}`,
                 ImgTitle:ImageData[parseInt(key)].title,
                 picKey:parseInt(key)
             })
@@ -155,7 +155,7 @@ class  PhotoRoute extends Component{
                         return(
                             <a  href={`javascript:;`} onClick={this.handleClick} key={key.id} >
                                 {/*父组件传值不允许穿key属性*/}
-                                <Image url={`http://localhost:3000/${key.url}`} k={key.id} styles={{h:100,w:100}}/>
+                                <Image url={`http://localhost/${key.url}`} k={key.id} styles={{h:100,w:100}}/>
                                 <p data-key={key.id}>{key.title}</p>
                             </a>
                         )
