@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import qs from 'qs';
 import {createStore} from 'redux';
+import http from './server';
 import {
     BrowserRouter as Router,
     Route,
@@ -222,13 +223,12 @@ class PersonalProjects extends Component{
     constructor(props){
         super(props)
     }
+    async get_upToken(){
+        const res = await http.get('/index.php',[]);
+        console.log(res);
+    }
     componentDidMount(){
-        axios({
-            method:'get',
-            url:'http://47.100.213.47:8080/index.php'
-        }).then((res)=>{
-            console.log(res)
-        })
+       this.get_upToken();
     }
     render(){
         return(
