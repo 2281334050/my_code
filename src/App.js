@@ -222,6 +222,28 @@ class PersonalProjects extends Component{
     constructor(props){
         super(props)
     }
+    componentDidMount(){
+        let baseUrl='';
+        if (process.env.NODE_ENV === 'development') {
+            baseUrl = 'http://localhost:3000';
+        } else {
+            // baseUrl = 'http://localhost:3000';
+        }
+// export const baseUrl = 'http://localhost:3000';
+        let $axios = axios.create({
+            baseURL: baseUrl + '/v2/movie',
+            timeout: 10000,
+            responseType: 'json',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
+            }
+        });
+        $axios({
+            method:'get',
+        }).then((res)=>{
+            console.log(res)
+        })
+    }
     render(){
         return(
             <div className={`PersonalProjects`}>
