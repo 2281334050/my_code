@@ -222,10 +222,17 @@ function SkillBar(props) {
 class PersonalProjects extends Component{
     constructor(props){
         super(props)
+        this.state={
+            token:''
+        }
     }
     async get_upToken(){
         const res = await http.get('/api/get_uptoken.php',[]);
-        console.log(res);
+        if(res.status==200){
+            this.setState({
+                token:res.data
+            });
+        }
     }
     componentDidMount(){
        this.get_upToken();
@@ -236,7 +243,10 @@ class PersonalProjects extends Component{
                 <ScrollToTopOnMount/>
                 <h2>关于做过的项目</h2>
                 <div className={`project-item`}>
-                    <form action="">
+                    <form action="http://up.qiniu.com" enctype="multipart/form-data">
+                        <input name="token" type="hidden" value={this.state.token}/>
+                        <input name="file" type="file" />
+                        <input type="submit" value="上传"/>
                     </form>
                 </div>
             </div>
