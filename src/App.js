@@ -224,7 +224,7 @@ class PersonalProjects extends Component{
         super(props)
     }
     async get_upToken(){
-        const res = await http.get('http://47.100.213.47/api/get_uptoken.php',[]);
+        const res = await http.get('http://47.100.213.47:8080/get_uptoken.php',[]);
         console.log(res);
     }
     componentDidMount(){
