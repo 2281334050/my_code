@@ -51,7 +51,7 @@ const extractTextPluginOptions = shouldUseRelativeAssetPaths
 // The development configuration is different and lives in a separate file.
 module.exports = {
   devServer:{
-    port:3000,
+    port:80,
     proxy:{
       '/v2':{
           target: 'http://47.100.213.47:8080',
