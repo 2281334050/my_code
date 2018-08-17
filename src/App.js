@@ -224,7 +224,7 @@ class PersonalProjects extends Component{
         super(props)
     }
     async get_upToken(){
-        const res = await http.get('/index.php',[]);
+        const res = await http.get('http://47.100.213.47/opt/get_uptoken.php',[]);
         console.log(res);
     }
     componentDidMount(){
@@ -236,7 +236,8 @@ class PersonalProjects extends Component{
                 <ScrollToTopOnMount/>
                 <h2>关于做过的项目</h2>
                 <div className={`project-item`}>
-
+                    <form action="">
+                    </form>
                 </div>
             </div>
         )
