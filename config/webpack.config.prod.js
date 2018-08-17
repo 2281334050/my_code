@@ -54,7 +54,7 @@ module.exports = {
     port:3000,
     proxy:{
       '/v2':{
-          target: 'http://api.douban.com',
+          target: 'http://47.100.213.47:8080',
           changeOrigin: true,
           pathRewrite: {
             '^/v2': '/v2'
