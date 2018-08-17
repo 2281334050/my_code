@@ -51,13 +51,14 @@ const extractTextPluginOptions = shouldUseRelativeAssetPaths
 // The development configuration is different and lives in a separate file.
 module.exports = {
   devServer:{
+    historyApiFallback: true,
     port:80,
     proxy:{
-      '/v2':{
+      '/api':{
           target: 'http://47.100.213.47:8080',
           changeOrigin: true,
           pathRewrite: {
-            '^/v2': '/v2'
+            '^/api': '/api'
           }
       }
     }
