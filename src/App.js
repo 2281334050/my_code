@@ -222,20 +222,6 @@ function SkillBar(props) {
 class PersonalProjects extends Component{
     constructor(props){
         super(props)
-        this.state={
-            token:''
-        }
-    }
-    async get_upToken(){
-        const res = await http.get('/api/get_uptoken.php',[]);
-        if(res.status==200){
-            this.setState({
-                token:res.data
-            });
-        }
-    }
-    componentDidMount(){
-       this.get_upToken();
     }
     render(){
         return(
@@ -243,16 +229,45 @@ class PersonalProjects extends Component{
                 <ScrollToTopOnMount/>
                 <h2>关于做过的项目</h2>
                 <div className={`project-item`}>
-                    <form method='post' action="http://up.qiniu.com" enctype="multipart/form-data">
-                        <input name="token" type="hidden" value={this.state.token}/>
-                        <input name="file" type="file" />
-                        <input type="submit" value="上传"/>
-                    </form>
+                    
                 </div>
             </div>
         )
     }
 }
+/*admin管理页*/
+ class Admin extends Component{
+     constructor(props){
+         super(props)
+         this.state={
+             token:sessionStorage.getItem('token')
+         }
+         console.log()
+     }
+     async get_upToken(){
+        const res = await http.get('/api/get_uptoken.php',[]);
+        if(res.status==200){
+            this.setState({
+                token:res.data
+            });
+            sessionStorage.setItem('token',res.data);
+        }
+    }
+     componentDidMount(){
+        if(this.state.token==''){
+            this.get_upToken();
+        }
+     }
+     render(){
+         return(
+            <form method='post' action="http://up.qiniu.com" enctype="multipart/form-data">
+                <input name="token" type="hidden" value={this.state.token}/>
+                <input name="file" type="file" />
+                <input type="submit" value="上传"/>
+            </form>
+         )
+     }
+ }
 /*得到我*/
 class Contact extends Component{
     constructor(props){
@@ -385,6 +400,10 @@ const routes = [
         path:'/Contact',
         component:Contact
     },
+    {
+        path:'/Admin',
+        component:Admin
+    }
 ];
 /*路由公共方法*/
 function RouteWithSubRoutes (route){
