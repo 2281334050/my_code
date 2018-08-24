@@ -240,9 +240,8 @@ class PersonalProjects extends Component{
      constructor(props){
          super(props)
          this.state={
-             token:sessionStorage.getItem('token')
+             token:sessionStorage.getItem('token')===null?'':sessionStorage.getItem('token')
          }
-         console.log()
      }
      async get_upToken(){
         const res = await http.get('/api/get_uptoken.php',[]);
@@ -254,7 +253,8 @@ class PersonalProjects extends Component{
         }
     }
      componentDidMount(){
-        if(this.state.token==''){
+         console.log(this.state.token)
+        if(this.state.token===''){
             this.get_upToken();
         }
      }
