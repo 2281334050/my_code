@@ -96,5 +96,11 @@
   "devDependencies": {
     "less": "^3.0.1",
     "less-loader": "^4.1.0"
+  },
+  "proxy":{
+    "/api":{
+      "target":"http://47.100.213.47",
+      "ws":true
+    }
   }
 }
