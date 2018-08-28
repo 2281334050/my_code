@@ -133,7 +133,7 @@ class  PhotoRoute extends Component{
     changePic = (key)=>{ /*公共改变图片方法*/
         if(key !== null){
             this.setState({
-                ModalUrl:`http://localhost/${ImageData[parseInt(key)].url ? ImageData[parseInt(key)].url : ''}`,
+                ModalUrl:`http://${window.location.host}/${ImageData[parseInt(key)].url ? ImageData[parseInt(key)].url : ''}`,
                 ImgTitle:ImageData[parseInt(key)].title,
                 picKey:parseInt(key)
             })
@@ -156,7 +156,7 @@ class  PhotoRoute extends Component{
                         return(
                             <a  href={`javascript:;`} onClick={this.handleClick} key={key.id} >
                                 {/*父组件传值不允许穿key属性*/}
-                                <Image url={`http://localhost/${key.url}`} k={key.id} styles={{h:100,w:100}}/>
+                                <Image url={`http://${window.location.host}/${key.url}`} k={key.id} styles={{h:100,w:100}}/>
                                 <p data-key={key.id}>{key.title}</p>
                             </a>
                         )
@@ -245,7 +245,7 @@ class PersonalProjects extends Component{
      }
      async get_upToken(){
         const res = await http.get('/api/get_uptoken.php',[]);
-        if(res.status==200){
+        if(res.status===200){
             this.setState({
                 token:res.data
             });
@@ -253,7 +253,8 @@ class PersonalProjects extends Component{
         }
     }
      componentDidMount(){
-         console.log(this.state.token)
+         console.log(window.location)
+         //console.log(this.state.token)
         if(this.state.token===''){
             this.get_upToken();
         }
