@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import qs from 'qs';
 import {createStore} from 'redux';
-import http from './server';
+import http from './server';//封装的请求方法
 import {
     BrowserRouter as Router,
     Route,
@@ -12,6 +12,7 @@ import {
 import './style.less';
 import ImageData from './imageData';
 import SkillData from './skillData';
+
 const requireContext = require.context("./img",true);
 const images = requireContext.keys().map(requireContext);
 ImageData.map(function (item,i) {
@@ -253,8 +254,6 @@ class PersonalProjects extends Component{
         }
     }
      componentDidMount(){
-         console.log(window.location)
-         //console.log(this.state.token)
         if(this.state.token===''){
             this.get_upToken();
         }

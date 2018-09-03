@@ -26,6 +26,19 @@ const env = getClientEnvironment(publicUrl);
 // It is focused on developer experience and fast rebuilds.
 // The production configuration is different and lives in a separate file.
 module.exports = {
+  devServer:{
+    historyApiFallback: true,
+    port:80,
+    proxy:{
+      '/api':{
+          target: '47.100.213.47',
+          changeOrigin: true,
+          pathRewrite: {
+            '*/api': '/api'
+          }
+      }
+    }
+  },
   // You may want 'eval' instead if you prefer to see the compiled output in DevTools.
   // See the discussion in https://github.com/facebookincubator/create-react-app/issues/343.
   devtool: 'cheap-module-source-map',
