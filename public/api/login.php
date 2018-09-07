@@ -3,9 +3,9 @@
 require_once 'init_db.php';
 $username = $_GET['username'];
 $password = $_GET['password'];
-$salt = 'Qiniu' . $uname;
-$pwd = crypt($_pwd, $salt);
-$stmt = $DB->query("select * from users where uname = '$uname'");
+$salt = 'Qiniu' . $username;
+$password = crypt($password, $salt);
+$stmt = $DB->query("select * from users where uname = '$username'");
 
     // if ($user['password'] !== $pwd)
     // {
