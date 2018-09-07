@@ -655,6 +655,72 @@ body{
         font-weight: 400;
       }
     }
+    /*登录模态框*/
+    .login-model{
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background: rgba(0, 0, 0, .6);
+      .login-box{
+        position: absolute;
+        top: calc(50% - 150px);
+        left: calc(50% - 300px);
+        padding: 50px 15px;
+        background: @barBackgroundColor;
+        box-shadow: 0 0 3px @borderColor;
+        border-radius: 3px;
+        width: 600px;
+        height: 300px;
+        .from-item{
+          >span{
+            margin-right: 20px;
+            display: inline-block;
+            width: 100px;
+            line-height: 40px;
+          }
+          .input-box{
+            display: inline-block;
+            position: relative;
+            >i{
+              position: absolute;
+              left: 10px;
+              top: 5px;
+              color: @btnTextColor;
+              font-size: 20px;
+            }
+            >input{
+              width: 250px;
+              line-height: 40px;
+              border: 1px solid transparent;
+              border-radius: 3px;
+              padding: 0 10px 0 45px;
+              font-size: 16px;
+              outline: none;
+              &:focus{
+                border-color: #00c6ff;
+                box-shadow: 0 0 10px rgba(41,108,255,.9);
+              }
+            }
+          }
+          >a{
+            display:inline-block;
+            width: 120px;
+            line-height: 45px;
+            border-radius:3px;
+            transition: all .3s ease;
+            &:hover{
+              background: linear-gradient(to bottom, #228fbd 0%,#2a5caa 100%);
+              box-shadow: 0 0 12px 0 #228fbd, inset 0 1px 0 0 rgba(255, 255, 255, 0.45), inset 1px 0 0 0 rgba(255, 255, 255, 0.25), inset -1px 0 0 0 rgba(255, 255, 255, 0.25);
+            }
+          }
+          &:last-child{
+            margin-top: 30px;
+          }
+        }
+      }
+    }
   }
 }
 

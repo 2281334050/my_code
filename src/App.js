@@ -241,33 +241,71 @@ class PersonalProjects extends Component{
      constructor(props){
          super(props)
          this.state={
-             token:sessionStorage.getItem('token')===null?'':sessionStorage.getItem('token')
+             token:''
          }
      }
-     async get_upToken(){
-        const res = await http.get('/api/get_uptoken.php',[]);
+     login = async(param)=>{
+        const res = await http.post('/api/login.php',param);
         if(res.status===200){
             this.setState({
                 token:res.data
             });
-            sessionStorage.setItem('token',res.data);
         }
     }
-     componentDidMount(){
-        if(this.state.token===''){
-            this.get_upToken();
-        }
-     }
      render(){
-         return(
-            <form method='post' action="http://up.qiniu.com" enctype="multipart/form-data">
-                <input name="token" type="hidden" value={this.state.token}/>
-                <input name="file" type="file" />
-                <input type="submit" value="上传"/>
-            </form>
-         )
+         if(this.state.token===''){
+             return <Login_model login={this.login} />
+         }else{
+             return(
+                 <div className={`admin`}>
+
+                 </div>
+             )
+         }
      }
  }
+/*登录模态框*/
+class Login_model extends Component{
+    constructor(props){
+        super(props)
+        this.state = {
+            username:'',
+            password:''
+        }
+    }
+    submit_click=()=>{
+        let param = {
+            username:this.state.username,
+            password:this.state.password
+        }
+        this.props.login(param);
+    };
+    inset_value=(e)=>{
+        if(e.target.name ==='password'){
+            this.setState({password:e.target.value})
+        }else{
+            this.setState({username:e.target.value})
+        }
+    }
+    render(){
+        return(
+            <div className={`login-model`}>
+                <div className={`login-box`}>
+                    <div className={`from-item mt15`}>
+                        <span>Username</span><div className={`input-box`}><i className={`icon-username`}></i><input onChange={this.inset_value} type="text" name={`username`} placeholder={`请输入用户名`}/></div>
+                    </div>
+                    <div className={`from-item mt15`}>
+                        <span>Password</span><div className={`input-box`}><i className={`icon-visible`}></i><input onChange={this.inset_value} type="password" name={`password`} placeholder={`请输入密码`}/></div>
+                    </div>
+                    <div className={`from-item mt15`}>
+                        <a onClick={this.submit_click} className={`sure mr15`}>Sign in</a>
+                        <a className={`cancel ml15`}>go back</a>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+}  
 /*得到我*/
 class Contact extends Component{
     constructor(props){
