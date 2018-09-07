@@ -5,7 +5,7 @@ $username = $_GET['username'];
 $password = $_GET['password'];
 $salt = 'Qiniu' . $uname;
 $pwd = crypt($_pwd, $salt);
-//$stmt = $DB->query("select * from users where uname = $uname");
+$stmt = $DB->query("select * from users where uname = $uname");
 
     // if ($user['password'] !== $pwd)
     // {
@@ -17,4 +17,4 @@ $pwd = crypt($_pwd, $salt);
 // $_SESSION['uid'] = $user['uid'];
 // $_SESSION['uname'] = $uname;
 // $resp = array('status' => 1, 'uname' => $uname);
-echo json_encode($pwd);
+echo json_encode($stmt);
