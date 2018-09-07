@@ -5,7 +5,10 @@ $username = $_GET['username'];
 $password = $_GET['password'];
 $salt = 'Qiniu' . $username;
 $password = crypt($password, $salt);
-$stmt = $DB->query("select * from users where uname = '$username'");
+$sql = "select * from users where uname = '$username'";
+$stmt = $DB->prepare($sql);
+$stmt->execute();
+$result=$stmt->fetch(PDO::FETCH_ASSOC);
 
     // if ($user['password'] !== $pwd)
     // {
@@ -17,4 +20,4 @@ $stmt = $DB->query("select * from users where uname = '$username'");
 // $_SESSION['uid'] = $user['uid'];
 // $_SESSION['uname'] = $uname;
 // $resp = array('status' => 1, 'uname' => $uname);
-var_dump($stmt);
+var_dump($result);
