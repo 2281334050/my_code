@@ -4,11 +4,13 @@ let http = {
     post:'',
     get:''
 };
-
+let instance = axios.create({
+  headers:{'Content-Type':'application/x-www-form-urlencoded'/*axios跨域请求头部*/}
+});
 http.post = function (api,data) {
     let params = qs.stringify(data);
     return new Promise((resolve,reject) => {
-        axios.post(api,params).then((res) => {
+        instance.post(api,params).then((res) => {
             resolve(res);
         })
     })
@@ -17,7 +19,7 @@ http.post = function (api,data) {
 http.get = function (api,data) {
     let params = qs.stringify(data);
     return new Promise((resolve,reject) => {
-        axios.get(api,params).then((res) => {
+        instance.get(api,params).then((res) => {
             resolve(res);
         })
     })

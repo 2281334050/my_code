@@ -245,7 +245,7 @@ class PersonalProjects extends Component{
          }
      }
      login = async(param)=>{
-        const res = await http.post('/api/login.php',param);
+        const res = await http.get('/api/login.php',param);
         if(res.status===200){
             this.setState({
                 token:res.data
