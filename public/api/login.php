@@ -5,7 +5,8 @@ $username = $_GET['username'];
 $password = $_GET['password'];
 $salt = 'Qiniu' . $username;
 $password = crypt($password, $salt);
-$stmt = $DB->query("select * from users where uname = $username");
+//$stmt = $DB->query("select * from users where uname = $username");
+$stmt = $DB->query("select * from users");
 
     // if ($user['password'] !== $pwd)
     // {
