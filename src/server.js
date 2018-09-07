@@ -5,7 +5,7 @@ let http = {
     get:''
 };
 let instance = axios.create({
-  headers:{'Content-Type':'application/x-www-form-urlencoded'/*axios跨域请求头部*/}
+    token:''
 });
 http.post = function (api,data) {
     let params = qs.stringify(data);
