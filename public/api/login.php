@@ -6,7 +6,6 @@ $password = $_GET['password'];
 $salt = 'Qiniu' . $username;
 $password = crypt($password, $salt);
 $stmt = $DB->query("select * from users where uname = $username");
-$result=$stmt->fetch(PDO::FETCH_ASSOC);
 
     // if ($user['password'] !== $pwd)
     // {
@@ -18,4 +17,4 @@ $result=$stmt->fetch(PDO::FETCH_ASSOC);
 // $_SESSION['uid'] = $user['uid'];
 // $_SESSION['uname'] = $uname;
 // $resp = array('status' => 1, 'uname' => $uname);
-echo json_encode($result);
+var_dump($stmt);
