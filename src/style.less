@@ -710,6 +710,7 @@ body{
             line-height: 45px;
             border-radius:3px;
             transition: all .3s ease;
+            cursor: pointer;
             &:hover{
               background: linear-gradient(to bottom, #228fbd 0%,#2a5caa 100%);
               box-shadow: 0 0 12px 0 #228fbd, inset 0 1px 0 0 rgba(255, 255, 255, 0.45), inset 1px 0 0 0 rgba(255, 255, 255, 0.25), inset -1px 0 0 0 rgba(255, 255, 255, 0.25);
@@ -721,7 +722,68 @@ body{
         }
       }
     }
+    /*admin管理界面*/
+    .admin{
+      min-height: 250px;
+      .user-info{
+        line-height: 30px;
+        text-align: right;
+      }
+      .setting-groups{
+        text-align: left;
+        .title{
+          font-size:18px;
+          color:@btnTextColor;
+        }
+        .setting-box{
+          height: 200px;
+          box-shadow: 0 0 3px @borderColor;
+          border-radius: 3px;
+        }
+      }
+    } 
   }
+  /*气泡消息框*/
+  .msg-tips{
+    line-height: 50px;
+    background: @barBackgroundColor;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    transform: rotateX(90deg);
+    transition: all .3s ease;
+    position: absolute;
+    color: #fff;
+    z-index:10;
+    text-align: center;
+    >i{
+      font-style: normal;
+      display: inline-block;
+      width: 20px;
+      line-height: 20px;
+      border-radius: 50%;
+      vertical-align:text-bottom;
+      font-family: "iconfont";
+      font-size: 12px;
+      &.success{
+        background: @successColor;
+        &::before{
+          content:'\E80D'; 
+        }
+      }
+      &.error{
+        background:@errorColor;
+        &::before{
+          content: '\e801'
+        }
+      }
+    }
+    &.show{
+      opacity: 1;
+      transform: rotateX(0deg);
+    }
+  } 
 }
 
 

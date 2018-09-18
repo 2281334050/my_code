@@ -3,6 +3,8 @@ import axios from 'axios';
 import qs from 'qs';
 import {createStore} from 'redux';
 import http from './server';//封装的请求方法
+import api from './libraries/api_list';//接口列表
+import * as qiniu from 'qiniu-js';//七牛上传sdknpm
 import {
     BrowserRouter as Router,
     Route,
@@ -26,6 +28,7 @@ class App extends Component {
         super(props);
         this.state = {
             className:'hide',
+            popMsg:{msg:'',status:0}/*status 0错误消息 1成功消息 */
         }
     }
     componentDidMount(){
@@ -42,9 +45,19 @@ class App extends Component {
             this.setState({className:''})
         }
     }
+    /*全局调用会话气泡窗口*/
+    popMsg = (msg_obj)=>{
+        console.log(msg_obj)
+        if(msg_obj){
+            this.setState({
+                popMsg:{msg:msg_obj.msg,status:msg_obj.status}
+            })
+        }
+    }
   render() {
     return (
       <div className={`main`}>
+        <MsgTips status={this.state.popMsg.status} popMsg={this.popMsg}  msg={this.state.popMsg.msg}/>
           <MusicPlayer />
           <Router>
               <div className={`main-content`}>
@@ -62,7 +75,7 @@ class App extends Component {
                       <Route path={`/`} exact render={()=>(<Redirect to={`/Create`}/>)}/>
                       {
                           routes.map((route,i) => (
-                              <RouteWithSubRoutes key={i} {...route}/>
+                              <RouteWithSubRoutes popMsg={this.popMsg} key={i} {...route}/>
                           ))
                       }
                   </div>
@@ -240,25 +253,34 @@ class PersonalProjects extends Component{
  class Admin extends Component{
      constructor(props){
          super(props)
+         const user = JSON.parse(localStorage.getItem('king-token'));
          this.state={
-             token:''
+             token:user!==null ? user.token : null,
+             user_info:{username:user !== null ? user.username : '',last_work_time:user !== null ? user.last_work_time : ''}
          }
      }
-     login = async(param)=>{
-        const res = await http.post('/api/info/login',param);
-        if(res.status===200){
-            this.setState({
-                token:res.data
-            });
-        }
-    }
+     hanleHideLoginModel=(res)=>{//手动登录过后隐藏登录框
+        this.setState({
+            token:res.token,
+            user_info:{username:res.username,last_work_time:res.last_work_time}
+        })
+     }
      render(){
-         if(this.state.token===''){
-             return <Login_model login={this.login} />
+         if(this.state.token===null){
+             return <Login_model popMsg={this.props.popMsg}  hanleHideLoginModel={this.hanleHideLoginModel}/>
          }else{
              return(
                  <div className={`admin`}>
-
+                    <div className={`user-info`}>
+                        {this.state.user_info.username!=='' ? <span>{this.state.user_info.username}</span>:''}
+                    </div>
+                    <div className={`setting-groups`}>
+                        <span className={`title`}>
+                        Publish pictures
+                        </span>
+                        <div className={`setting-box mt10`}>
+                        </div>
+                    </div>
                  </div>
              )
          }
@@ -270,15 +292,33 @@ class Login_model extends Component{
         super(props)
         this.state = {
             username:'',
-            password:''
+            password:'',
+            error:''
+        }
+    }
+    login = async(param)=>{
+        const res = await http.post(api.login,param);
+        if(res.status===1){
+            localStorage.setItem('king-token',JSON.stringify(res));//转换为json存入
+            this.props.hanleHideLoginModel(res);//成功之后隐藏登录框
+            let msg_obj = {msg:`欢迎回来 ${res.username}`,status:res.status}
+            this.props.popMsg(msg_obj);
+        }else{
+            let msg_obj = {msg:res.msg,status:res.status}
+            this.props.popMsg(msg_obj);
         }
     }
     submit_click=()=>{
+        if(this.state.username==='' || this.state.password===''){
+            let msg_obj = {msg:'账号或密码不可为空',status:0}
+            this.props.popMsg(msg_obj);
+            return false;
+        };
         let param = {
             username:this.state.username,
             password:this.state.password
         }
-        this.props.login(param);
+        this.login(param);
     };
     inset_value=(e)=>{
         if(e.target.name ==='password'){
@@ -305,7 +345,55 @@ class Login_model extends Component{
             </div>
         )
     }
-}  
+}
+/*气泡消息框*/  
+class MsgTips extends Component{
+    constructor(props){
+        super(props);
+        console.log(props)
+        this.state={
+            show:false,//会话消息显示隐藏
+            msg:'',//会话消息文字
+            status:0//会话消息状态
+        }
+    }
+    componentWillReceiveProps(newProps){
+        if(newProps.msg){
+            this.setState({
+                show:true,
+                msg:newProps.msg,
+                status:newProps.status
+            })
+        }
+    }
+    shouldComponentUpdate(nextProps,nextState){
+        if(this.state.show===nextState.show){
+                return false
+        }
+        return true;
+    }
+    componentDidUpdate(){
+        if(this.state.show){
+             this.setShowTime(3000);
+        }
+    }
+    setShowTime = async(s)=>{
+        const time = await setTimeout(()=>{
+            this.setState({
+                show:false
+            })
+            this.props.popMsg({msg:'',status:0})//清空消息
+        },s)
+    }
+    render(){
+        return(
+            <div className={`msg-tips ${this.state.show===true ? 'show':''}`}>
+                <i className={`mr5 ${this.state.status === 1?'success':'error'}`}></i>
+                <span>{this.state.msg}</span>
+            </div>
+        )
+    }
+} 
 /*得到我*/
 class Contact extends Component{
     constructor(props){
@@ -448,7 +536,7 @@ function RouteWithSubRoutes (route){
     return(
         <Route path={route.path}  render={(props)=>
             {
-                return <route.component {...props} routes={route.routes}/>
+                return <route.component popMsg={route.popMsg} {...props} routes={route.routes}/>
             }
         }/>
     )
@@ -546,7 +634,7 @@ class MusicPlayer extends Component{
           if(res.status === 200){
               this.setState({
                   songList:res.data.Body,
-                  src:res.data.Body[this.state.currentSong].url
+                  //src:res.data.Body[this.state.currentSong].url
               })
           }
       })
