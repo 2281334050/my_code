@@ -4,7 +4,7 @@ import qs from 'qs';
 import {createStore} from 'redux';
 import http from './server';//封装的请求方法
 import api from './libraries/api_list';//接口列表
-import * as qiniu from 'qiniu-js';//七牛上传sdknpm
+//import * as qiniu from 'qiniu-js';//七牛上传sdknpm
 import {
     BrowserRouter as Router,
     Route,
@@ -116,7 +116,7 @@ class Create extends Component{
                         {/*二级路由重定向*/}
                         <Route path={`/Create`} exact render={()=>(<Redirect to={`/Create/MyResume`}/>)}/>
                         {
-                            this.props.routes.map(function (route,i) {
+                            this.props.routes.map( (route,i)=> {
                                 return  <RouteWithSubRoutes key={i} {...route}/>
                             })
                         }
@@ -256,7 +256,8 @@ class PersonalProjects extends Component{
          const user = JSON.parse(localStorage.getItem('king-token'));
          this.state={
              token:user!==null ? user.token : null,
-             user_info:{username:user !== null ? user.username : '',last_work_time:user !== null ? user.last_work_time : ''}
+             user_info:{username:user !== null ? user.username : '',last_work_time:user !== null ? user.last_work_time : ''},
+             tab:0,
          }
      }
      hanleHideLoginModel=(res)=>{//手动登录过后隐藏登录框
@@ -267,27 +268,237 @@ class PersonalProjects extends Component{
      }
      render(){
          if(this.state.token===null){
-             return <Login_model popMsg={this.props.popMsg}  hanleHideLoginModel={this.hanleHideLoginModel}/>
+             return <LoginModel popMsg={this.props.popMsg}  hanleHideLoginModel={this.hanleHideLoginModel}/>
          }else{
              return(
                  <div className={`admin`}>
                     <div className={`user-info`}>
-                        {this.state.user_info.username!=='' ? <span>{this.state.user_info.username}</span>:''}
+                        {this.state.user_info!=='' ? <i className={`status mr10`}></i>:''}
+                        {this.state.user_info.username!=='' ? <span className={`username mr10`}>{this.state.user_info.username}</span>:''}
+                        {this.state.user_info.last_work_time!=='' ? <span className={`last-work-time`}>上一次登录：{this.state.user_info.last_work_time}</span>:''}
                     </div>
-                    <div className={`setting-groups`}>
-                        <span className={`title`}>
-                        Publish pictures
-                        </span>
-                        <div className={`setting-box mt10`}>
+                    <Router>
+                        <div className={`setting-groups`}>
+                            <div className={`setting-box clearFix mt10`}>
+                                <div className={`nav-tab clearFix`}>
+                                    <NavLink to={`/Admin/PublishPictures`} className={`fl`}  activeClassName={`active`}>Publish Pictures</NavLink>
+                                    <NavLink to={`/Admin/PublishProjects`} className={`fl`}  activeClassName={`active`}>Publish Projects</NavLink>
+                                </div>
+                                <div className={`tab-box`}>
+                                    {/*二级路由重定向*/}
+                                    <Route path={`/Admin`} exact render={()=>(<Redirect to={`/Admin/PublishPictures`}/>)}/>
+                                    {
+                                        this.props.routes.map((route,i)=> {
+                                            return  <RouteWithSubRoutes popMsg={this.props.popMsg} key={i} {...route}/>
+                                        })
+                                    }
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    </Router>
                  </div>
+                 
              )
          }
      }
  }
+/*admin发布照片*/
+class PublishPictures extends Component{
+    constructor(props){
+        super(props)
+        this.state={
+            current_photo_list:null,
+            photo_lists:[],
+            photos:[],
+            isShow:0,//model对话框0 不显示 1新建相册 2上传照片 3照片编辑 4编辑相册名称 5弹出提示对话框
+            photo_list_name:'',//最后提交相册的name
+            edit_photo_list_id:null //当前点击编辑的相册的id
+        }
+    }
+    GetPhotoLists= async ()=>{//获取相册列表
+        const res = await http.get(api.get_photo_lists,[]);
+        if(res.status==1){
+            this.setState({
+                photo_lists:res.list,
+            })
+            let flag = false;
+            if(this.state.photo_lists.length!==0){
+                this.state.photo_lists.map((v,k)=>{
+                    if(this.current_photo_list === v.id){
+                        flag = true;
+                    }
+                })
+                if(!flag){
+                    this.setState({
+                        current_photo_list:res.list[0].id
+                    })
+                }
+            
+            }else{
+                this.setState({
+                    current_photo_list:null
+                })
+            }
+        }
+    }
+    componentDidMount(){
+        this.GetPhotoLists();
+    }
+    insetInput=(e)=>{
+        this.setState({
+            photo_list_name:e.target.value
+        })
+    }
+    handleChange=(e)=>{//切换相册
+       this.setState({
+        current_photo_list:parseInt(e.target.value)
+       })
+    }
+    popBoxBtnSure=(e)=>{//请求添加相册接口//编辑相册入口//删除相册入口
+        let msg_obj={},
+            params;
+        switch(this.state.isShow){
+            case 1:case 4:
+                if(this.state.photo_list_name===''){
+                msg_obj = {msg:'请输入相册名称',status:0}
+                this.props.popMsg(msg_obj);
+                return false;
+                }
+                if(this.state.isShow === 1){//新增
+                    params = {name:this.state.photo_list_name};
+                    this.publicAJAX(params,api.addPhotoAlbum,'POST');
+                }else{//编辑
+                    params = {id:this.state.edit_photo_list_id,new_name:this.state.photo_list_name}
+                    this.publicAJAX(params,api.edit_photo_list,'POST');
+                }
+            break;
+            case 5:
+                params = {id:this.state.edit_photo_list_id}
+                this.publicAJAX(params,api.delete_photo_list,'POST');
+            break;
+            default:
+            break;
+        }
+    }
+    showPopBox=(e)=>{//打开弹窗
+        let type = parseInt(e.target.getAttribute('data-type'));
+        let old_name = e.target.getAttribute('data-name') === null ? '':e.target.getAttribute('data-name');
+        let edit_list_id = e.target.getAttribute('data-id') === null ? null:parseInt(e.target.getAttribute('data-id'));
+        this.setState({
+            isShow:type,
+            photo_list_name:old_name,
+            edit_photo_list_id:edit_list_id
+        })
+    }
+    cancel=()=>{//关闭弹窗
+        this.setState({
+            isShow:0,
+            photo_list_name:'',
+            edit_photo_list_id:null
+        })
+    }
+    popBoxHtml=()=>{//popbox弹窗内容
+        if(this.state.isShow){
+            switch (this.state.isShow){
+                case 1:case 4:
+                    return (<PublicModel className={`CreatePhotoAlbum`} title={`新建相册`}>
+                        <div className={`form-item mt15`}>
+                            <input type="text" name={`name`} defaultValue={this.state.photo_list_name} onChange={this.insetInput} placeholder={`请输入相册名`}/>
+                        </div>
+                        <div className={`form-item mt15`}>
+                            <a className={`sure`} onClick={this.popBoxBtnSure} href="javascript:;">提交</a>
+                            <a className={`cancel`} onClick={this.cancel} href="javascript:;">取消</a>
+                        </div>
+                    </PublicModel>);
+                    break;
+                case 2:
+                    break;
+                case 3:
+                    break;
+                case 5:
+                return(<PublicModel className={`MsgTips`} title={`提示`}>
+                        <div className={`form-item mt15`}>
+                            <div className={`msg`}>确定删除该相册吗？</div>
+                        </div>
+                        <div className={`form-item mt15`}>
+                            <a className={`sure`} onClick={this.popBoxBtnSure} href="javascript:;">确定</a>
+                            <a className={`cancel`} onClick={this.cancel} href="javascript:;">取消</a>
+                        </div>
+                    </PublicModel>);
+                    break;
+                default:
+                    break;
+            }
+        }else{
+            return null;
+        }
+    }
+    publicAJAX=async(params,api,method)=>{//公共ajax
+        let msg_obj={},
+            res;
+        if(method==='POST'){
+             res = await http.post(api,params);
+        }else{
+             res = await http.get(api,params);
+        }
+        if(res.status===1){
+             msg_obj = {msg:res.msg,status:1};
+            this.props.popMsg(msg_obj);
+            this.cancel();//关闭对话
+            this.GetPhotoLists();//取得相册列表
+        }else{
+             msg_obj = {msg:res.msg,status:0};
+            this.props.popMsg(msg_obj);
+        }
+    }
+    render(){
+        return(
+            <div className={`PublishPictures`}>
+              <div className={`choose-photo-list`}>
+              {
+                 this.state.photo_lists.length === 0 ? <span className={`empty`}>暂无相册</span> :this.state.photo_lists.map((v,k)=>{
+                     return  (<div key={k}>
+                                <input type={`radio`} data-list-id={v.id} name={`photo-list`}  checked={this.state.current_photo_list === v.id ? true : false} onChange={this.handleChange} value={v.id}/>
+                                <span>
+                                    <h4>{v.name}</h4>
+                                    <span className={`operation-btn`}>
+                                        <i data-name={v.name} data-id={v.id} data-type="4" onClick={this.showPopBox} className={`icon-pencil mr5`}></i>
+                                        <i data-id={v.id} onClick={this.showPopBox} data-type="5" className={`icon-trash ml5`}></i>
+                                    </span>
+                                </span>
+                                </div>
+                            )
+                 })
+              }
+              <a className={`add-photo-list ml10`} onClick={this.showPopBox} data-type="1" href={`javascript:;`}>NewOne</a>
+              </div>
+              <div className={`photos mt15 clearFix`}>
+              {
+                  //this.state.photos.length === 0 ? <div className={`empty`}>请先新建相册即可上传照片</div>:null
+                  <div className={`photo-item fl`}>
+                        <img src={`http://pdhr9nhxj.bkt.clouddn.com/396880416-585284b57b021.jpeg`}/>
+                        <span className={`title`}>照片的名字</span>
+                  </div>
+                  
+              }
+               <div className={`add-photo fl`}>
+                </div>
+              </div>
+                {this.popBoxHtml()}
+            </div>
+        )
+    }
+}
+/*admin发布项目*/
+class PublishProjects extends Component{
+    render(){
+        return(
+            <div>PublishProjects</div>
+        )
+    }
+}  
 /*登录模态框*/
-class Login_model extends Component{
+class LoginModel extends Component{
     constructor(props){
         super(props)
         this.state = {
@@ -350,7 +561,6 @@ class Login_model extends Component{
 class MsgTips extends Component{
     constructor(props){
         super(props);
-        console.log(props)
         this.state={
             show:false,//会话消息显示隐藏
             msg:'',//会话消息文字
@@ -528,7 +738,17 @@ const routes = [
     },
     {
         path:'/Admin',
-        component:Admin
+        component:Admin,
+        routes:[
+            {
+                path:'/Admin/PublishPictures',
+                component:PublishPictures
+            },
+            {
+                path:'/Admin/PublishProjects',
+                component:PublishProjects
+            }
+        ]
     }
 ];
 /*路由公共方法*/
@@ -883,6 +1103,38 @@ class Song extends Component{
                     <span className={`${this.props.songInfo.hasOwnProperty('cannotPlay') && this.props.songInfo.cannotPlay===false ? 'playDisabled' : ''} author-name`}>{this.props.songInfo.author}</span>
                 </li>
 
+        )
+    }
+}
+/*公共弹出操作框*/
+class PublicModel extends Component{
+    constructor(props){
+        super(props);
+        this.state={
+            style:{left:0,top:0}
+        }
+    }
+    componentDidMount(){
+        let winH = window.innerHeight,
+            winW = window.innerWidth,
+            w = this.refs.MsgContent.offsetWidth,
+            h = this.refs.MsgContent.offsetHeight;
+        this.setState({
+            style:{left:`${winW/2-w/2}px`,top:`${winH/2-h/2}px`}
+        })
+    }
+    render(){
+        return(
+            <div className={`PublicModel`}>
+                <div ref={`MsgContent`} style={this.state.style} className={`${this.props.className} MsgContent`}>
+                    <div className={`MsgTitle`}>
+                        {this.props.title}
+                    </div>
+                    <div className={`MsgBox`}>
+                        {this.props.children}
+                    </div>
+                </div>
+            </div>
         )
     }
 }

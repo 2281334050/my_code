@@ -37,7 +37,12 @@
 .mb15{
   margin-bottom: 15px;
 }
-
+.fl{
+  float: left;
+}
+.fr{
+  float:right;
+}
 .linkStyle{
   color: @linkColor;
   &:after{
@@ -67,6 +72,21 @@
 .br(@r){
   border-radius: @r;
   border: 1px solid @borderColor;
+}
+.light-box-shadow(@color1,@color2){
+  background: linear-gradient(to bottom,@color1 0%,@color2 100%);
+  box-shadow: 0 0 12px 0 @color2, inset 0 1px 0 0 rgba(255, 255, 255, 0.45), inset 1px 0 0 0 rgba(255, 255, 255, 0.25), inset -1px 0 0 0 rgba(255, 255, 255, 0.25);
+}
+.light-box-shadow-hover(@color1,@color2){
+  background: linear-gradient(to bottom,@color1 0%,@color2 100%);
+    &:hover{
+    box-shadow: 0 0 12px 0 @color2, inset 0 1px 0 0 rgba(255, 255, 255, 0.45), inset 1px 0 0 0 rgba(255, 255, 255, 0.25), inset -1px 0 0 0 rgba(255, 255, 255, 0.25);
+  }
+}
+.empty{
+  font-size:18px;
+  color:@backgroundColor;
+  text-align: center;
 }
 /*按钮*/
 .btn(){
@@ -728,6 +748,14 @@ body{
       .user-info{
         line-height: 30px;
         text-align: right;
+        >i{
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          vertical-align: text-bottom;
+          .light-box-shadow(@linkColor,@successColor);
+          border-radius: 50%;
+        }
       }
       .setting-groups{
         text-align: left;
@@ -736,9 +764,215 @@ body{
           color:@btnTextColor;
         }
         .setting-box{
-          height: 200px;
-          box-shadow: 0 0 3px @borderColor;
-          border-radius: 3px;
+          max-height: 800px;
+          .nav-tab{
+            line-height: 35px;
+            >a{
+              line-height: 35px;
+              padding: 0 10px;
+              .btn();
+              border:1px solid @borderColor;
+              border-bottom: 0;
+              border-bottom-left-radius: 0;
+              border-bottom-right-radius: 0;
+              background: #222222;
+              &:not(:first-child){
+                margin-left: 5px;
+              }
+              &.active{
+                top:1px;
+              }
+            }
+          }
+          .tab-box{
+            min-height: 300px;
+            .br(3px);
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+            padding: 15px;
+            .PublishPictures{
+              .choose-photo-list{
+                >div{
+                  display: inline-block;
+                  color:@TextColor;
+                  &:not(:first-child){
+                    margin-left: 10px;
+                  }
+                  >span{
+                    display: inline-block;
+                    line-height: 30px;
+                    max-width: 110px;
+                    padding: 0 3px;
+                    vertical-align: middle;
+                    position: relative;
+                    >h4{
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                      white-space: nowrap;
+                    }
+                    &:hover{
+                      &::after{
+                        content: '';
+                        border: 8px solid rgba(222,49,99,.7);
+                        border-left: 8px solid transparent;
+                        border-right: 8px solid transparent;
+                        border-bottom: 8px solid transparent;
+                        position: absolute;
+                        left:5px;
+                        top:-2px;
+                      }
+                    }
+                    &:hover .operation-btn{
+                      display:block;
+                    }
+                    .operation-btn{
+                      text-align: center;
+                      display:none;
+                      position: absolute;
+                      border-radius: 3px;
+                      top:-32px;
+                      left: 0;
+                      width: 100px;
+                      height: 100%;
+                      background: rgba(222,49,99,.7);
+                      >i{
+                        color: @TextColor;
+                        cursor: pointer;
+                        &:hover{
+                          color: @linkColor;
+                        }
+                      }
+                    }
+                  }
+                  input {
+                    appearance: none; /* remove default */
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 12px;
+                    cursor: pointer;
+                    vertical-align: middle;
+                    box-shadow: hsla(0,0%,100%,.15) 0 1px 1px, inset hsla(0,0%,0%,.5) 0 0 0 1px;
+                    background-color: hsla(0,0%,0%,.2);
+                    background-repeat: no-repeat;
+                    transition: background-position .15s cubic-bezier(.8, 0, 1, 1),all .25s cubic-bezier(.8, 0, 1, 1);
+                    background-image: radial-gradient( hsla(200,100%,90%,1) 0%, hsla(200,100%,70%,1) 15%, hsla(200,100%,60%,.3) 28%, hsla(200,100%,30%,0) 70% );
+                    outline: 0;
+                    background-position: 0 24px;
+                    &:checked{
+                      background-position: 0 0;
+                      transition: background-position .2s .15s cubic-bezier(0, 0, .2, 1),all .25s cubic-bezier(0, 0, .2, 1);
+                    }
+                    &:active{
+                      transform: scale(1.1);
+                      transition: all .1s cubic-bezier(0, 0, .2, 1);
+                    }
+                  }
+                }
+                .add-photo-list{
+                  display: inline-block;
+                  padding: 3px 5px;
+                  border: 1px dashed @borderColor;
+                  color:@borderColor;
+                  &:hover{
+                    border-color:@linkColor;
+                    color:@linkColor;
+                  }
+                }
+              }
+              .photos{
+                min-height: 200px;
+                .photo-item{
+                  height: 140px;
+                  width: 120px;
+                  padding: 10px 10px 20px 10px;
+                  border-radius: 5px;
+                  transition: all .3s linear;
+                  cursor: pointer;
+                  &:hover{
+                    background: #444;
+                    transform: rotate(-3deg);
+                    box-shadow: 0 0px 20px #000;
+                  }
+                  img{
+                    width: 100px;
+                    height:100px;
+                  }
+                  .title{
+                    font-size: 14px;
+                    text-align: center;
+                  }
+                }
+                .add-photo{
+                  width: 100px;
+                  height: 100px;
+                  margin-top: 10px;
+                  border: 1px dashed @backgroundColor;
+                  position: relative;
+                  cursor: pointer;
+                  &::after{
+                      content: '\e800';
+                      font-family: "iconfont";
+                      color: @backgroundColor;
+                      font-size: 20px;
+                      position: absolute;
+                      top: 37px;
+                      left: 37px;
+                  }
+                  &:hover{
+                    border-color:@btnHoverColor;
+                    &::after{
+                      color:@btnHoverColor;
+                    }
+                  }
+                }
+              }
+              .CreatePhotoAlbum,.MsgTips{
+                width: 400px;
+                height: 200px;
+                &.MsgTips{
+                    .msg{
+                      font-size: 20px;
+                      font-weight: bold;
+                      line-height: 50px;
+                    }
+                }
+                .form-item{
+                  text-align: center;
+                  >input{
+                    width: 250px;
+                    line-height: 40px;
+                    border: 1px solid transparent;
+                    border-radius: 3px;
+                    padding: 0 10px;
+                    font-size: 16px;
+                    outline: none;
+                    &:focus{
+                      border-color: #00c6ff;
+                      box-shadow: 0 0 10px rgba(41,108,255,.9);
+                    }
+                  }
+                  >a{
+                    display:inline-block;
+                    width: 100px;
+                    line-height: 45px;
+                    border-radius:3px;
+                    transition: all .3s ease;
+                    cursor: pointer;
+                    margin-top: 10px;
+                    &.sure{
+                      color: @TextColor;
+                      .light-box-shadow-hover(#228fbd,#2a5caa);
+                    }
+                    &.cancel{
+                      margin-left: 20px;
+                      color: @black;
+                      .light-box-shadow-hover(@btnTextColor,@TextColor);
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     } 
@@ -786,7 +1020,32 @@ body{
   } 
 }
 
-
+/*公共弹出对话框*/
+.PublicModel{
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: rgba(0, 0, 0, .6);
+    color:#999999;
+    .MsgContent{
+      position: absolute;
+      background: @barBackgroundColor;
+      box-shadow: 0 0 3px @borderColor;
+      border-radius: 3px;
+      .MsgTitle{
+        padding: 0 15px;
+        line-height: 40px;
+        font-size: 20px;
+        font-weight: 600;
+        border-bottom: 1px solid @borderColor;
+      }
+      .MsgBox{
+        padding: 0 15px;
+      }
+    }
+}
 /*AJAX loading动效*/
 .ajaxLoader {
   margin: 0 auto;
