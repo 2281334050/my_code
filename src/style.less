@@ -888,15 +888,74 @@ body{
                   border-radius: 5px;
                   transition: all .3s linear;
                   cursor: pointer;
-                  &:hover{
+                  &:not(.upload):hover{
                     background: #444;
                     transform: rotate(-3deg);
                     box-shadow: 0 0px 20px #000;
                   }
-                  img{
-                    width: 100px;
-                    height:100px;
-                  }
+                  .img-box{
+                    position: relative;
+                    img{
+                      width: 100px;
+                      height:100px;
+                      vertical-align: middle;
+                    }
+                    .progress-mark{
+                      position: absolute;
+                      left: 0;
+                      top: 0;
+                      height: 100%;
+                      width: 100%;
+                      background: rgba(255, 255, 255, .7);
+                      .progress {
+                        width: 70px;
+                        position: absolute;
+                        padding: 1px;
+                        top: 45px;
+                        left: 15px;
+                        background: rgba(0, 0, 0, 0.25);
+                        border-radius: 6px;
+                        -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px rgba(255, 255, 255, 0.08);
+                        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px rgba(255, 255, 255, 0.08);
+                        .progress-bar {
+                          position: relative;
+                          height: 6px;
+                          border-radius: 4px;
+                          -webkit-transition: 0.4s linear;
+                          -moz-transition: 0.4s linear;
+                          -o-transition: 0.4s linear;
+                          transition: 0.4s linear;
+                          -webkit-transition-property: width, background-color;
+                          -moz-transition-property: width, background-color;
+                          -o-transition-property: width, background-color;
+                          transition-property: width, background-color;
+                          -webkit-box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.25), inset 0 1px rgba(255, 255, 255, 0.1);
+                          box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.25), inset 0 1px rgba(255, 255, 255, 0.1);
+                          &::before,&::after{
+                            content: '';
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            right: 0;
+                          }
+                          &::before{
+                            bottom: 0;
+                            background: url("http://demo.lanrenzhijia.com/2014/css1117/images/stripes.png") 0 0 repeat;
+                            border-radius: 4px 4px 0 0;
+                          }
+                          &::after{
+                            z-index: 2;
+                            bottom: 45%;
+                            border-radius: 4px;
+                            background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
+                            background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
+                            background-image: -o-linear-gradient(top, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
+                            background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
+                          }
+                        }
+                      }                 
+                    }
+                  }        
                   .title{
                     font-size: 14px;
                     text-align: center;
@@ -906,9 +965,9 @@ body{
                   width: 100px;
                   height: 100px;
                   margin-top: 10px;
-                  border: 1px dashed @backgroundColor;
                   position: relative;
                   cursor: pointer;
+                  border: 1px dashed @backgroundColor;
                   &::after{
                       content: '\e800';
                       font-family: "iconfont";

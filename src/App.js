@@ -4,7 +4,6 @@ import qs from 'qs';
 import {createStore} from 'redux';
 import http from './server';//封装的请求方法
 import api from './libraries/api_list';//接口列表
-//import * as qiniu from 'qiniu-js';//七牛上传sdknpm
 import {
     BrowserRouter as Router,
     Route,
@@ -14,7 +13,6 @@ import {
 import './style.less';
 import ImageData from './imageData';
 import SkillData from './skillData';
-
 const requireContext = require.context("./img",true);
 const images = requireContext.keys().map(requireContext);
 ImageData.map(function (item,i) {
@@ -317,7 +315,7 @@ class PublishPictures extends Component{
     }
     GetPhotoLists= async ()=>{//获取相册列表
         const res = await http.get(api.get_photo_lists,[]);
-        if(res.status==1){
+        if(res.status===1){
             this.setState({
                 photo_lists:res.list,
             })
@@ -400,7 +398,7 @@ class PublishPictures extends Component{
     popBoxHtml=()=>{//popbox弹窗内容
         if(this.state.isShow){
             switch (this.state.isShow){
-                case 1:case 4:
+                case 1:case 4://编辑&&新建相册
                     return (<PublicModel className={`CreatePhotoAlbum`} title={`新建相册`}>
                         <div className={`form-item mt15`}>
                             <input type="text" name={`name`} defaultValue={this.state.photo_list_name} onChange={this.insetInput} placeholder={`请输入相册名`}/>
@@ -411,7 +409,22 @@ class PublishPictures extends Component{
                         </div>
                     </PublicModel>);
                     break;
-                case 2:
+                case 2://添加相片
+                return(<PublicModel className={`uploadImage`} title={`上传图片`}>
+                        <div className={`form-item`}>
+                            <div className={`img-list clearFix`}>
+                                <div className={`img-item fl`}>
+                                    <img src={`http://pdhr9nhxj.bkt.clouddn.com/396880416-585284b57b021.jpeg`}/>
+                                    <div className={`progress-mark`}>
+                                        <div className={`progress`}>
+                                            <div className={`progress-bar`}></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a id={`add-img`}></a>
+                        </div>
+                    </PublicModel>);
                     break;
                 case 3:
                     break;
@@ -451,6 +464,9 @@ class PublishPictures extends Component{
             this.props.popMsg(msg_obj);
         }
     }
+    initUpload(){
+        
+    }
     render(){
         return(
             <div className={`PublishPictures`}>
@@ -476,12 +492,18 @@ class PublishPictures extends Component{
               {
                   //this.state.photos.length === 0 ? <div className={`empty`}>请先新建相册即可上传照片</div>:null
                   <div className={`photo-item fl`}>
-                        <img src={`http://pdhr9nhxj.bkt.clouddn.com/396880416-585284b57b021.jpeg`}/>
+                        <div className={`img-box`}>
+                            <img src={`http://pdhr9nhxj.bkt.clouddn.com/396880416-585284b57b021.jpeg`}/>
+                            <div className={`progress-mark`}>
+                                <div className={`progress`}>
+                                    <div className={`progress-bar`}></div>
+                                </div>
+                            </div>
+                        </div>
                         <span className={`title`}>照片的名字</span>
-                  </div>
-                  
+                  </div>                 
               }
-               <div className={`add-photo fl`}>
+               <div id={`add-photo`} className={`add-photo fl`}>
                 </div>
               </div>
                 {this.popBoxHtml()}
