@@ -11,6 +11,7 @@ import {
     Redirect
 } from 'react-router-dom';
 import './style.less';
+import qiniu from 'qiniu.js';
 import ImageData from './imageData';
 import SkillData from './skillData';
 const requireContext = require.context("./img",true);
