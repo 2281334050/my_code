@@ -11,7 +11,6 @@ import {
     Redirect
 } from 'react-router-dom';
 import './style.less';
-import qiniu from 'qiniu.js';
 import ImageData from './imageData';
 import SkillData from './skillData';
 const requireContext = require.context("./img",true);
@@ -342,6 +341,7 @@ class PublishPictures extends Component{
     }
     componentDidMount(){
         this.GetPhotoLists();
+        this.initUpload();//初始化上传
     }
     insetInput=(e)=>{
         this.setState({
@@ -504,7 +504,9 @@ class PublishPictures extends Component{
                         <span className={`title`}>照片的名字</span>
                   </div>                 
               }
-               <div id={`add-photo`} className={`add-photo fl`}>
+                <div className={`fl`}>
+                    <a id={`add-photo`} ref={`add_photo`} className={`add-photo fl`}>
+                    </a>
                 </div>
               </div>
                 {this.popBoxHtml()}
@@ -514,9 +516,14 @@ class PublishPictures extends Component{
 }
 /*admin发布项目*/
 class PublishProjects extends Component{
+    componentDidMount(){
+    
+    }
     render(){
         return(
-            <div>PublishProjects</div>
+            <div>
+                <button ref={`add`}>添加</button>
+            </div>
         )
     }
 }  
