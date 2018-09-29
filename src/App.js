@@ -4,6 +4,8 @@ import qs from 'qs';
 import {createStore} from 'redux';
 import http from './server';//封装的请求方法
 import api from './libraries/api_list';//接口列表
+import settings from './settings';
+import * as qiniu from 'qiniu-js';
 import {
     BrowserRouter as Router,
     Route,
@@ -304,13 +306,22 @@ class PersonalProjects extends Component{
 class PublishPictures extends Component{
     constructor(props){
         super(props)
+        const user = JSON.parse(localStorage.getItem('king-token'));
         this.state={
             current_photo_list:null,
             photo_lists:[],
-            photos:[],
+            photos:[
+            ],
             isShow:0,//model对话框0 不显示 1新建相册 2上传照片 3照片编辑 4编辑相册名称 5弹出提示对话框
             photo_list_name:'',//最后提交相册的name
-            edit_photo_list_id:null //当前点击编辑的相册的id
+            edit_photo_list_id:null, //当前点击编辑的相册的id
+            upload_token:user!==null ? user.token.split(".")[3] : null,//上传所需token
+            upload_config:{//上传配置
+                useCdnDomain: true,
+                disableStatisticsReport: false,
+                retryCount: 6,
+                region: qiniu.region.z0
+            }
         }
     }
     GetPhotoLists= async ()=>{//获取相册列表
@@ -331,7 +342,7 @@ class PublishPictures extends Component{
                         current_photo_list:res.list[0].id
                     })
                 }
-            
+                this.GetPhotos();
             }else{
                 this.setState({
                     current_photo_list:null
@@ -339,19 +350,28 @@ class PublishPictures extends Component{
             }
         }
     }
+    GetPhotos= async ()=>{//取图片
+        let param = {photo_list_id:this.state.current_photo_list}
+        const res = await http.post(api.get_photos,param);
+        if(res.status===1){
+            this.setState({
+                photos:res.list,
+            })
+        }
+    }
     componentDidMount(){
-        this.GetPhotoLists();
-        this.initUpload();//初始化上传
+        this.GetPhotoLists();//获取相册列表
     }
     insetInput=(e)=>{
         this.setState({
             photo_list_name:e.target.value
         })
     }
-    handleChange=(e)=>{//切换相册
-       this.setState({
-        current_photo_list:parseInt(e.target.value)
-       })
+    handleChange= async (e)=>{//切换相册
+        await this.setState({
+            current_photo_list:parseInt(e.target.value)
+       });
+       this.GetPhotos();
     }
     popBoxBtnSure=(e)=>{//请求添加相册接口//编辑相册入口//删除相册入口
         let msg_obj={},
@@ -465,14 +485,102 @@ class PublishPictures extends Component{
             this.props.popMsg(msg_obj);
         }
     }
-    initUpload(){
-        
+    initUpload(file,key,token,putExtra,config){
+        let observable = qiniu.upload(file,key,token,putExtra,config);
+            observable.subscribe({
+                next:(res)=>{
+                    const total = res.total;
+                   let photos = this.state.photos;
+                    photos.map((v,k)=>{
+                        if(v.key === key){
+                            v.progress = total.percent
+                            this.setState({
+                                photos:photos
+                            })
+                        }
+                    })
+                },
+                error:(res)=>{
+                    console.log(res)
+                },
+                complete:(res)=>{
+                    if(res.status===1){
+                        let photos = this.state.photos;
+                        photos.map((v,k)=>{
+                            if(v.key === key){
+                                photos[k] = res.data[0];
+                                this.setState({
+                                    photos:photos
+                                })
+                            }
+                        }) 
+                    }
+                }
+            });
+    }
+    changeFile=(e)=>{//选取上传文件
+        let file = e.target.files[0];
+        if(file){
+            let key  = file.name;
+            let putExtra={
+                fname:'',
+                params:{
+                    "x:name":key.split(".")[0],
+                    "x:photo_list_id":this.state.current_photo_list,
+                },
+                mimeType:settings.upload.allowType||null
+            };
+            const new_img = {
+                id:null,
+                key:key,
+                name:key.split(".")[0],
+                is_loading:true,
+                progress:0,
+                url:''
+            }
+            if(typeof FileReader !== 'undefined'){//判断浏览器支持base64转码
+                //上传前预览
+            let reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (e)=>{//转图片为base64
+                    new_img.url = e.currentTarget.result,
+                    this.setState((prevState)=>{
+                        return {photos:prevState.photos.concat(new_img)}
+                    })
+                }
+            }
+            //上传初始化开始
+            this.initUpload(file,key,this.state.upload_token,putExtra,this.state.upload_config);
+        }
+    }
+    MapPhotos=()=>{//遍历相册
+        if(this.state.photos.length!==0){
+            return this.state.photos.map((v,k)=>(
+                <div key={k} className={`photo-item fl`}>
+                    <div  className={`img-box`}>
+                        <img src={v.is_loading?v.url:settings.qiniu.domain+v.key}/>
+                        {
+                             v.is_loading === true ?
+                             <div className={`progress-mark`}>
+                                 <div className={`progress`}>
+                                     <div className={`progress-bar`} style={{width:`${v.progress}%`}}></div>
+                                 </div>
+                             </div>  
+                             :''
+                        }
+                    </div>  
+                    <span className={`title`}>{v.name}</span>
+                </div> 
+              ))
+        }else{
+            return <div className={`empty`}>暂无照片</div>
+        }
     }
     render(){
         return(
             <div className={`PublishPictures`}>
               <div className={`choose-photo-list`}>
-              {
+              {//相册新建编辑
                  this.state.photo_lists.length === 0 ? <span className={`empty`}>暂无相册</span> :this.state.photo_lists.map((v,k)=>{
                      return  (<div key={k}>
                                 <input type={`radio`} data-list-id={v.id} name={`photo-list`}  checked={this.state.current_photo_list === v.id ? true : false} onChange={this.handleChange} value={v.id}/>
@@ -491,23 +599,17 @@ class PublishPictures extends Component{
               </div>
               <div className={`photos mt15 clearFix`}>
               {
-                  //this.state.photos.length === 0 ? <div className={`empty`}>请先新建相册即可上传照片</div>:null
-                  <div className={`photo-item fl`}>
-                        <div className={`img-box`}>
-                            <img src={`http://pdhr9nhxj.bkt.clouddn.com/396880416-585284b57b021.jpeg`}/>
-                            <div className={`progress-mark`}>
-                                <div className={`progress`}>
-                                    <div className={`progress-bar`}></div>
-                                </div>
-                            </div>
-                        </div>
-                        <span className={`title`}>照片的名字</span>
-                  </div>                 
+                  this.state.photo_lists.length === 0 ? <div className={`empty`}>请先新建相册即可上传照片</div>:this.MapPhotos()
+                                 
               }
-                <div className={`fl`}>
-                    <a id={`add-photo`} ref={`add_photo`} className={`add-photo fl`}>
-                    </a>
-                </div>
+              {//添加按钮
+                  this.state.photo_lists.length !== 0 && 
+                    <div className={`fl`}>
+                        <a id={`add-photo`} ref={`add_photo`} className={`add-photo fl`}>
+                            <input type="file" style={{width:'100%',height:'100%',position:'absolute',opacity:0}} onChange={this.changeFile} id="select"/>
+                        </a>
+                    </div>
+              }
               </div>
                 {this.popBoxHtml()}
             </div>
