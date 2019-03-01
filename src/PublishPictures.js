@@ -144,7 +144,7 @@ class PublishPictures extends Component{
                       <div className={`form-item`}>
                           <div className={`img-list clearFix`}>
                               <div className={`img-item fl`}>
-                                  <img src={`http://pdhr9nhxj.bkt.clouddn.com/396880416-585284b57b021.jpeg`}/>
+                                  <img src={`${settings.qiniu.domain}+396880416-585284b57b021.jpeg`}/>
                                   <div className={`progress-mark`}>
                                       <div className={`progress`}>
                                           <div className={`progress-bar`}></div>

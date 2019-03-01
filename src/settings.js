@@ -4,7 +4,7 @@ let config = {
       maxImageSize:4194304,//图片上传最大4M,
     },
     qiniu:{
-      domain:'http://pdhr9nhxj.bkt.clouddn.com/',
+      domain:'http://pno1k5vfj.bkt.clouddn.com/',
     }
 };
 export default config;
