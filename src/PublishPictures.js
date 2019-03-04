@@ -25,6 +25,10 @@ class PublishPictures extends Component{
               retryCount: 6,
               region: qiniu.region.z0
           },
+          currentPhoto:{
+              src:null,
+              name:null
+          }//当前查看的图片
       }
   }
   GetPhotoLists= async ()=>{//获取相册列表
@@ -76,13 +80,13 @@ class PublishPictures extends Component{
           photo_list_name:e.target.value
       })
   }
-  handleChange= async (e)=>{//切换相册
+  handleChange= async (id)=>{//切换相册
       await this.setState({
-          current_photo_list:parseInt(e.target.value)
+          current_photo_list:parseInt(id)
      });
      this.GetPhotos();
   }
-  popBoxBtnSure=(e)=>{//请求添加相册接口//编辑相册入口//删除相册入口
+  popBoxBtnSure=()=>{//请求添加相册接口//编辑相册入口//删除相册入口
       let msg_obj={},
           params;
       switch(this.state.isShow){
@@ -108,10 +112,7 @@ class PublishPictures extends Component{
           break;
       }
   }
-  showPopBox=(e)=>{//打开弹窗
-      let type = parseInt(e.target.getAttribute('data-type'));
-      let old_name = e.target.getAttribute('data-name') === null ? '':e.target.getAttribute('data-name');
-      let edit_list_id = e.target.getAttribute('data-id') === null ? null:parseInt(e.target.getAttribute('data-id'));
+  showPopBox=(type,old_name,edit_list_id)=>{//打开弹窗
       this.setState({
           isShow:type,
           photo_list_name:old_name,
@@ -139,12 +140,12 @@ class PublishPictures extends Component{
                       </div>
                   </PublicModel>);
                   break;
-              case 2://添加相片
-              return(<PublicModel className={`uploadImage`} title={`上传图片`}>
+              case 2://查看
+              return(<PublicModel className={`uploadImage`} title={`查看图片`}>
                       <div className={`form-item`}>
                           <div className={`img-list clearFix`}>
                               <div className={`img-item fl`}>
-                                  <img src={`${settings.qiniu.domain}+396880416-585284b57b021.jpeg`}/>
+                                  <img src={this.state.currentPhoto.src}/>
                                   <div className={`progress-mark`}>
                                       <div className={`progress`}>
                                           <div className={`progress-bar`}></div>
@@ -152,7 +153,6 @@ class PublishPictures extends Component{
                                   </div>
                               </div>
                           </div>
-                          <a id={`add-img`}></a>
                       </div>
                   </PublicModel>);
                   break;
@@ -271,7 +271,7 @@ class PublishPictures extends Component{
     }
     if(this.state.photos.list.length>0){
           return this.state.photos.list.map((v,k)=>(
-              <div key={k} className={`photo-item fl`}>
+              <div onClick={(e)=>this.cheackPhoto(2,v.id,settings.qiniu.domain+v.key,v.name)} key={k} className={`photo-item fl`}>
                   <div  className={`img-box`}>
                       <img src={v.is_loading?v.url:settings.qiniu.domain+v.key}/>
                       {
@@ -291,6 +291,15 @@ class PublishPictures extends Component{
           return <div className={`empty`}>暂无照片</div>
       }
   }
+  cheackPhoto=(type,id,src,name)=>{
+    this.setState({
+        isShow:type,
+        currentPhoto:{
+            src:src,
+            name:name
+        }
+    })
+  }
   render(){
       return(
           <div className={`PublishPictures`}>
@@ -299,7 +308,7 @@ class PublishPictures extends Component{
               <PhotoLists photo_lists={this.state.photo_lists.list} is_ajaxing={this.state.photo_lists.is_ajaxing} current_photo_list={this.state.current_photo_list} handleChange={this.handleChange} showPopBox={this.showPopBox}/>
             }
             {
-               !this.state.photo_lists.is_ajaxing ?<a className={`add-photo-list ml10`} onClick={this.showPopBox} data-type="1" href={`javascript:;`}>NewOne</a>:''
+               !this.state.photo_lists.is_ajaxing ?<a className={`add-photo-list ml10`} onClick={(e)=>this.showPopBox(1,null,null)} data-type="1" href={`javascript:;`}>NewOne</a>:''
             }
             </div>
             <div className={`photos mt15 clearFix`}>
@@ -342,12 +351,12 @@ class PhotoLists extends Component{
     if(this.props.photo_lists.length>0){
         return this.props.photo_lists.map((v,k)=>(
           <div key={k}>
-          <input type={`radio`} data-list-id={v.id} name={`photo-list`}  checked={this.props.current_photo_list === v.id ? true : false} onChange={this.props.handleChange} value={v.id}/>
+          <input type={`radio`} name={`photo-list`}  checked={this.props.current_photo_list === v.id ? true : false} onChange={(e)=>this.props.handleChange(v.id)} value={v.id}/>
           <span>
               <h4>{v.name}</h4>
               <span className={`operation-btn`}>
-                  <i data-name={v.name} data-id={v.id} data-type="4" onClick={this.props.showPopBox} className={`icon-pencil mr5`}></i>
-                  <i data-id={v.id} onClick={this.props.showPopBox} data-type="5" className={`icon-trash ml5`}></i>
+                  <i data-name={v.name} data-id={v.id} data-type="4" onClick={(e)=>this.props.showPopBox(4,v.name,v.id)} className={`icon-pencil mr5`}></i>
+                  <i data-id={v.id} onClick={(e)=>this.props.showPopBox(5,null,v.id)} data-type="5" className={`icon-trash ml5`}></i>
               </span>
           </span>
           </div>  
