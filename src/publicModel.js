@@ -21,9 +21,12 @@ class PublicModel extends Component{
           <div className={`PublicModel`}>
               <div ref={`MsgContent`} style={this.state.style} className={`${this.props.className} MsgContent`}>
                   <div className={`MsgTitle`}>
-                      {this.props.title}
+                    {
+                        typeof this.props.cencel !=='undefined' ? <i onClick={this.props.cencel} className={`fr icon-close`}></i>:''//可设置关闭按钮及其触发事件
+                    }
+                    {this.props.title}
                   </div>
-                  <div className={`MsgBox`}>
+                  <div className={`MsgBox clearFix`}>
                       {this.props.children}
                   </div>
               </div>

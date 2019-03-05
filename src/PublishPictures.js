@@ -27,7 +27,9 @@ class PublishPictures extends Component{
           },
           currentPhoto:{
               src:null,
-              name:null
+              name:null,
+              id:null,
+              description:null
           }//当前查看的图片
       }
   }
@@ -86,7 +88,7 @@ class PublishPictures extends Component{
      });
      this.GetPhotos();
   }
-  popBoxBtnSure=()=>{//请求添加相册接口//编辑相册入口//删除相册入口
+  popBoxBtnSure=()=>{//请求添加相册接口//编辑相册入口//删除相册入口//编辑当前查看图片信息入口
       let msg_obj={},
           params;
       switch(this.state.isShow){
@@ -104,6 +106,15 @@ class PublishPictures extends Component{
                   this.publicAJAX(params,api.edit_photo_list,'POST');
               }
           break;
+          case 2:
+            if(this.state.currentPhoto.name===''){
+                msg_obj = {msg:'请输入图片名称',status:0}
+                this.props.popMsg(msg_obj);
+                return false;
+                }
+                params = {name:this.state.currentPhoto.name,id:this.state.currentPhoto.id,description:this.state.currentPhoto.description}
+                this.publicAJAX(params,api.edit_photo,'POST')
+          break;
           case 5:
               params = {id:this.state.edit_photo_list_id}
               this.publicAJAX(params,api.delete_photo_list,'POST');
@@ -119,13 +130,54 @@ class PublishPictures extends Component{
           edit_photo_list_id:edit_list_id
       })
   }
+  cheackPhoto=(type,id,src,name,description)=>{
+    this.setState({
+        isShow:type,
+        currentPhoto:{
+            src:src,
+            name:name,
+            id:id,
+            description:description
+        }
+    })
+  }
   cancel=()=>{//关闭弹窗
       this.setState({
           isShow:0,
           photo_list_name:'',
-          edit_photo_list_id:null
+          edit_photo_list_id:null,
+          currentPhoto:{
+            src:null,
+            name:null,
+            id:null,
+            description:null
+        }
       })
   }
+  changeImgName=(e,type)=>{//type 1是修改名字触发,2是修改文字描述触发
+    let dom = e.target.value;
+    this.setState((prevState)=>{
+        if(type===1){
+            return {
+                currentPhoto:{
+                    src:prevState.currentPhoto.src,
+                    name:dom,
+                    id:prevState.currentPhoto.id,
+                    description:prevState.currentPhoto.description
+                }
+            }
+        }else{
+            return {
+                currentPhoto:{
+                    src:prevState.currentPhoto.src,
+                    name:prevState.currentPhoto.name,
+                    id:prevState.currentPhoto.id,
+                    description:dom
+                }
+            } 
+        }
+    })
+}
   popBoxHtml=()=>{//popbox弹窗内容
       if(this.state.isShow){
           switch (this.state.isShow){
@@ -141,33 +193,34 @@ class PublishPictures extends Component{
                   </PublicModel>);
                   break;
               case 2://查看
-              return(<PublicModel className={`uploadImage`} title={`查看图片`}>
-                      <div className={`form-item`}>
-                          <div className={`img-list clearFix`}>
-                              <div className={`img-item fl`}>
-                                  <img src={this.state.currentPhoto.src}/>
-                                  <div className={`progress-mark`}>
-                                      <div className={`progress`}>
-                                          <div className={`progress-bar`}></div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
+              return(<PublicModel cencel={this.cancel} className={`checkImage`} title={`查看图片`}>
+                      <div className={`form-item clearFix`}>
+                        <div className={`img-detail fr`}>
+                            <input type="text" name={`name`} maxLength={`10`} defaultValue={this.state.currentPhoto.name} onChange={(e)=>this.changeImgName(e,1)} placeholder={`请输入图片名最大10字符`}/>
+                            <textarea maxLength={`100`} defaultValue={this.state.currentPhoto.description} onChange={(e)=>this.changeImgName(e,2)} className={`mt10`} placeholder={`请输入名字描述最大100字符`} name={`description`}>
+                                
+                            </textarea>
+                            <a className={`sure`} onClick={this.popBoxBtnSure} href="javascript:;">提交</a>
+                            <a className={`cancel`} onClick={this.cancel} href="javascript:;">取消</a>
+                        </div>
+                        <div className={`img-box`}>
+                            <img src={this.state.currentPhoto.src}/>
+                        </div>
                       </div>
-                  </PublicModel>);
+                    </PublicModel>);
                   break;
               case 3:
                   break;
               case 5:
               return(<PublicModel className={`MsgTips`} title={`提示`}>
-                      <div className={`form-item mt15`}>
-                          <div className={`msg`}>确定删除该相册吗？</div>
-                      </div>
-                      <div className={`form-item mt15`}>
-                          <a className={`sure`} onClick={this.popBoxBtnSure} href="javascript:;">确定</a>
-                          <a className={`cancel`} onClick={this.cancel} href="javascript:;">取消</a>
-                      </div>
-                  </PublicModel>);
+                        <div className={`form-item mt15`}>
+                            <div className={`msg`}>确定删除该相册吗？</div>
+                        </div>
+                        <div className={`form-item mt15`}>
+                            <a className={`sure`} onClick={this.popBoxBtnSure} href="javascript:;">确定</a>
+                            <a className={`cancel`} onClick={this.cancel} href="javascript:;">取消</a>
+                        </div>
+                    </PublicModel>);
                   break;
               default:
                   break;
@@ -179,6 +232,7 @@ class PublishPictures extends Component{
   publicAJAX=async(params,api,method)=>{//公共ajax
       let msg_obj={},
           res;
+          console.log(params)
       if(method==='POST'){
            res = await http.post(api,params);
       }else{
@@ -271,7 +325,7 @@ class PublishPictures extends Component{
     }
     if(this.state.photos.list.length>0){
           return this.state.photos.list.map((v,k)=>(
-              <div onClick={(e)=>this.cheackPhoto(2,v.id,settings.qiniu.domain+v.key,v.name)} key={k} className={`photo-item fl`}>
+              <div onClick={(e)=>this.cheackPhoto(2,v.id,settings.qiniu.domain+v.key,v.name,v.description)} key={k} className={`photo-item fl`}>
                   <div  className={`img-box`}>
                       <img src={v.is_loading?v.url:settings.qiniu.domain+v.key}/>
                       {
@@ -290,15 +344,6 @@ class PublishPictures extends Component{
       }else{
           return <div className={`empty`}>暂无照片</div>
       }
-  }
-  cheackPhoto=(type,id,src,name)=>{
-    this.setState({
-        isShow:type,
-        currentPhoto:{
-            src:src,
-            name:name
-        }
-    })
   }
   render(){
       return(
