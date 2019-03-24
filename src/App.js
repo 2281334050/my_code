@@ -671,7 +671,7 @@ class MusicPlayer extends Component{
           if(res.status === 200){
               this.setState({
                   songList:res.data.Body,
-                  //src:res.data.Body[this.state.currentSong].url
+                  src:res.data.Body[this.state.currentSong].url
               })
           }
       })
